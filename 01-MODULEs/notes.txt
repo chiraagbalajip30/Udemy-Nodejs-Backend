@@ -169,3 +169,29 @@ Callback Function is required in async operation because it needs to display som
 Data and Error are used as parameters i Async Functions.
 
 
+Video-23
+---------
+
+Internal Architecture of Node.js: EVents Loop and Thread Loop
+
+
+You will be having a "Node.js Server". Within that there will be "Event Queue" and "Event Loop".
+
+EVent Loop will be contsantly listening to the Queue. 
+
+For exmaple: 
+I have created a website and users start hitting it. The request sent by the user or users who first sent the request before another user will be stored within the Event Queus. It will be stored in a certain order which supports "FIFO". Then Event Loop will be constantly watching the Queue.
+
+Now the importatnt part starts.
+The Event Loop checks or accepts the first user request which will be stored in an order, and checks whether if it is a Blocking operation or Non-Blocking Operation. So lets say if the task is blocking operation. Then event loop will execute the first code. Then it will take a lot of time if it needs to complete blocking operation, and the other users or requests will be on hold and has to wait.
+
+Second Important Part.
+Non-Blocking operation is something which is a CPU-intensive task(heavy task which requires a cpu). Thread Pools are offloaded to work on a cpu-intensive task, and the space or size can be altered.
+
+Now, imagine if it is a Non-Blocking Operation, it transfers the data or request to something called as "Thread Pool". This Thread Pool is placed outside the "Node.js Server". Then Event Loop will distribute as much tasks to the threads inside the Thread Loop as much as possible. Imagine one non-blocing task to one thread within a thread loop. One thread will complete the task, and gives it back to the user.
+
+
+Now, the other case is, if you want a synchronous option only like a gameboard game, where one user has to wait till the first user completes his round, then we need Synchronous Operations.
+
+So, the conclusion is, it's not like sync operations are bad. It depends on the use case.
+
