@@ -95,3 +95,32 @@ fs.readFileSync - reads the content within the fs.
 writeFileSync - writes or creates a new file with the text mentioned along with it in the syntax. It always "overwrites the content".
 
 fs.appendFileSync - If you want to append or add the content to the already existing content within the file. 
+
+
+You can also create DIrectory - fs.mkdirSync('games');
+This creates a folder named "games".
+If you want to create multiple folder inside it or at once, then:
+fs.mkdirSync("games/xyz/a", { recursive : true });
+
+To remove directory - fs.rmdirSync("games/xyz/a", { recursive: true });
+
+You need to remove one by one as per the video. But for me everything got remove with a single command by using only 'games' that is, fs.rmdirSync("games", { recursive: true });.
+
+we can create and  then delete a file using "fs.unlinkSync". Example:
+
+// fs.writeFileSync("sample.txt", "I am creating a new file using writeFileSync", "utf-8");
+
+// fs.unlinkSync("sample.txt");
+
+
+Differece between "rmdirSync and unlinkSync" is that:
+unlinkSync - Deletes a file or symbolic link (symlink)
+rmdirSync - Deletes an empty directory (folder)
+
+So, for third party modules we will use require("fs"); and for built-in modles we will use require("node:fs");
+
+----------------------------------------------
+
+Video - 22
+-----------
+

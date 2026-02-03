@@ -1,1 +1,3 @@
-I am creating a new file using writeFileSync. I am creating a new file using appendFileSync and trying to add content to it
+I am creating a new file using writeFileSync
+
+I am creating a new file using appendFileSync and trying to add content to it.
