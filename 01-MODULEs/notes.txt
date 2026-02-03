@@ -94,4 +94,4 @@ fs.readFileSync - reads the content within the fs.
 
 writeFileSync - writes or creates a new file with the text mentioned along with it in the syntax. It always "overwrites the content".
 
-fs.appendFileSync - If you want to append or add the content to the already existing content within the file.
+fs.appendFileSync - If you want to append or add the content to the already existing content within the file. 
