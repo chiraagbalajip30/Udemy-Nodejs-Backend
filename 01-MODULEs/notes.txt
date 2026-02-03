@@ -1,0 +1,51 @@
+MODULES - It is a collection of code, that provides your functionality. There are 3 types:
+
+1. Built In Modules
+2. Third Party or External Modules - which can be installed using npm intall
+3. Custom Modules (my own)
+
+Built In Modules
+--------------------
+File System Module (fs)
+
+was given beacuse nodejs is a js built into c program, they have given whole fs modules, which helps us to work onnode modules in the machine.
+
+if you want to read the files, use readFileSync. You have to add the binary code format like utf-8 to see the content properly
+
+fs.readFileSync() is a method from Node.js's built-in fs (File System) module. "It reads the entire contents of a file from your disk synchronously" (meaning it blocks / pauses your entire program until the reading is finished).
+
+These below sync and async haven't be thought yet
+
+Use Sync (...Sync): Quick scripts, config loading at startup, learning, build tools, when order matters and you don't mind blocking
+Use Async/Promises: Servers, APIs, apps that handle many requests — never block the event loop!
+
+
+
+Operation,Synchronous (blocking),Asynchronous Callback,Promise / async-await (best in 2026),What it does
+Read whole file,"fs.readFileSync(path, [options])","fs.readFile(path, options, callback)","fsPromises.readFile(path, options)",Read entire file content
+Write / overwrite file,"fs.writeFileSync(file, data, [options])","fs.writeFile(file, data, options, cb)","fsPromises.writeFile(file, data, options)",Create or replace file with new content
+Append to file,"fs.appendFileSync(file, data, [options])","fs.appendFile(file, data, options, cb)","fsPromises.appendFile(file, data, options)",Add text to the end of file
+Delete file,fs.unlinkSync(path),"fs.unlink(path, callback)",fsPromises.unlink(path),Remove / delete file
+Create directory,"fs.mkdirSync(path, [options])","fs.mkdir(path, options, callback)","fsPromises.mkdir(path, options)",Make a new folder
+Read directory contents,"fs.readdirSync(path, [options])","fs.readdir(path, options, callback)","fsPromises.readdir(path, options)",List files/folders in a directory
+Check if exists,fs.existsSync(path) (old) or use fs.accessSync,"fs.exists(path, cb) (deprecated)","fsPromises.access(path, mode)",Check file/dir accessibility
+
+
+there will be a wrapper which wraps the entire typed code in node.js
+Example:
+
+function wrapper (exports, requests, module, --filename, --dirname) {
+    const fs = require("fs");
+    // console.log(fs);
+
+    const content = fs.readFileSync("notes.txt", 'utf-8');
+    console.log(content);
+}
+
+here, require function can be used only because require function is present within the wrapper. I fyou try to use require in browser console, you can't access it nd returns error.
+
+Node.js gives require function, lind of module name i want to load. It checks if there are any 3rd party installation(json web token) along with the or present in the module. Then it checks for built-in module(fs). But both are not there, it throws an error.
+
+require('./math.js')  -  one dot is single directory, two dots means behind 2 directories. So, if you use './', nodejs will get to know that it is a 'custom module'.
+
+require also does something called as "internal Caching" which we will be explained in the upcoming topics.
