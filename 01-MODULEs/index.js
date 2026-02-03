@@ -39,3 +39,7 @@ const content = fs.readFileSync("notes.txt", "utf-8");
 
 
 console.log(content);
+
+// ------------------------------------------
+
+// Video - 22 in script.js file(created now)

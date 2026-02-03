@@ -1,6 +1,8 @@
 Video - 19 and 20
 -------------------
 
+Related code in index.js File
+
 MODULES - It is a collection of code, that provides your functionality. There are 3 types:
 
 1. Built In Modules
@@ -123,4 +125,47 @@ So, for third party modules we will use require("fs"); and for built-in modles w
 
 Video - 22
 -----------
+Blocking vs Non-BlockingCode Execution in Node.js
+
+I created a new script.js file and am doing the code there.
+
+Sync Operations :
+Blocking Operations.
+Step by Step execution
+
+console.log("Start of Script");
+
+const contents = fs.readFileSync("copy.txt", "utf-8");
+
+console.log("Contents", contents);
+
+console.log("End of Script");
+
+Output Order - 1, 2, 3.
+
+Real World Example - Won't be used in websites as it delays the process.
+
+
+Async Operations:
+Non-Blocking.
+Doesn't wait for big data and executes other steps in the meantime.
+
+
+fs.readFile("copy.txt", "utf-8", function(error, data) {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log("COntent got: ", data);
+    }
+})
+
+
+console.log("End of Script");
+
+Output - 1, 3, 2.
+
+Callback Function is required in async operation because it needs to display something or let the user know is the task has been succesfull by completeing the task (data), or it didnot due to some error(error).
+Data and Error are used as parameters i Async Functions.
+
 
