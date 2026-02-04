@@ -13,7 +13,7 @@ Built In Modules
 --------------------
 File System Module (fs)
 
-was given beacuse nodejs is a js built into c program, they have given whole fs modules, which helps us to work onnode modules in the machine.
+was given beacuse nodejs is a js built into c program, they have given whole fs modules, which helps us to work on node modules in the machine.
 
 if you want to read the files, use readFileSync. You have to add the binary code format like utf-8 to see the content properly
 
@@ -99,7 +99,7 @@ writeFileSync - writes or creates a new file with the text mentioned along with 
 fs.appendFileSync - If you want to append or add the content to the already existing content within the file. 
 
 
-You can also create DIrectory - fs.mkdirSync('games');
+You can also create Directory - fs.mkdirSync('games');
 This creates a folder named "games".
 If you want to create multiple folder inside it or at once, then:
 fs.mkdirSync("games/xyz/a", { recursive : true });
@@ -194,4 +194,37 @@ Now, imagine if it is a Non-Blocking Operation, it transfers the data or request
 Now, the other case is, if you want a synchronous option only like a gameboard game, where one user has to wait till the first user completes his round, then we need Synchronous Operations.
 
 So, the conclusion is, it's not like sync operations are bad. It depends on the use case.
+
+-----------------------------------------
+
+Video - 24 
+----------
+What are Evensts in Node.js and it's importance
+--------------------------------------------
+
+Node.js follows an event-driven architecture where actions(events) trigger specific responses.
+
+The EventEmitter class in the events module is used to handle events in Node.js.
+
+Events in Node.js work like a publisher-subscriber model where an event is emitted and eventlisteners(handlers) respond to it.
+
+NOTE - Libuv is the heart of the entire eNode.js ecosystem. What Libuv does is whenever a event comes up, it goes to the cpu and informs cpu to do some task or get ready for the processing.
+
+"Much of the Node.js core API is built around an idiomatic asynchronous event-driven architecture in which certain kinds of objects (called "emitters") emit named events that cause Function objects ("listeners") to be called".
+
+For instance: a net.Server object emits an event each time a peer connects to it; a fs.ReadStream emits an event when the file is opened; a stream emits an event whenever data is available to be read.
+
+All objects that emit events are instances of the EventEmitter class. These objects expose an eventEmitter.on() function that allows one or more functions to be attached to named events emitted by the object. Typically, event names are camel-cased strings but any valid JavaScript property key can be used.
+
+When the EventEmitter object emits an event, all of the functions attached to that specific event are called synchronously. Any values returned by the called listeners are ignored and discarded.
+
+Above explanation is freom Node.js documentation explanation. Now I will make note of the Udemy explanation.
+
+There will be a list of listeners which will be didvided into multi-callable and singler-callable events. Mult-callable accepts multiple events whereas, single-callable listeners accept single event.
+
+Why use Events?
+1. Helps in asynchronous programming without callback hell.
+2. Used heavily in real-time applications like chat apps, notifications and streams.
+3. Core modules like http, fs and stream use events internally.
+
 
