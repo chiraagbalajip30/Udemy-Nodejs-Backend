@@ -227,4 +227,56 @@ Why use Events?
 2. Used heavily in real-time applications like chat apps, notifications and streams.
 3. Core modules like http, fs and stream use events internally.
 
+-----------------------------------------------
 
+Video - 25
+-----------
+myEvents.js File
+
+
+The new keyword in JavaScript (and therefore in Node.js) is an operator used to create a new object instance from a constructor function or class.
+
+const EventEmitter = require("events");     // ← this gives you the constructor function / class
+
+const eventEmitter = new EventEmitter();    // ← new creates a fresh, independent object
+
+
+Real-life analogy
+Think of EventEmitter as a blueprint (like a cookie cutter):
+
+EventEmitter = the cookie cutter shape
+new EventEmitter() = using the cutter to stamp out a new, individual cookie
+Each cookie (instance) can have its own chocolate chips (listeners) added independently
+Without new → you're just holding the cutter, not making any cookies
+
+
+What does new actually do?
+
+JavaScript secretly performs these 4 steps:
+
+Creates a brand new, empty object{}
+Sets the prototype of this new object to point to ConstructorFunction.prototype
+(This is how inheritance works — the new object gets access to all methods/properties on the prototype)
+Binds this inside the constructor function to point to this brand new object
+Returns the new object automatically (unless the constructor explicitly returns something else).
+
+
+
+// Basic understanding with def: emitters emits the event to the listeners
+
+// eventEmitter     → is the "emitter" (the object that can announce things)
+// "greet"          → is the named event (the specific signal/name it shouts)
+// () => console.log("Hello!")   → is the listener (the function that gets called when the event happens)
+
+
+
+eventEMitter.once() - used to ewmit the event only once
+
+// trying to emit first, then remove and see that it won't run when emitted again - removeListener
+
+wer can aslo check who all are listening on this event
+ex - console.log(eventEmitter.listeners("test"));
+
+So, if there are more objects listening to the same listener, it proves that the event objects can ber multi-callable.
+
+The above was done using object. The "myEventClass.js" is using class.
