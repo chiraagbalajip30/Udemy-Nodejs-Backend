@@ -1,0 +1,211 @@
+Data is stored in numbers according to our knowledge. But it also contains psaces like: 0101 010111 0001 0011. This is called as binary which has something of base 2.
+
+From binary, thhis gets converted to a number like 1,54, or some number according to the binary number, and then it will get converted to an alphabet m or something, and then hjoined as a sequence of letters. moiurya. Then an emojie or something. 
+This was jsut an example.
+
+0048 - H
+UTF-8 Encoding  -  0X48
+UTF-16 Encoding  -  0X0048
+UTF-32 Encoding  -  0X00000048
+
+
+There will be a memory. There will be some representation of 8 bytes or some other bytes. You have to write the data in the allocated space and thenb read it.
+
+So, Buffer is allow me to write some data of my choice and then read it.
+For ex, you cannot read those files directly. You have to upload them to the memory, and then it does the job through the OS. 
+
+
+
+What are Buffers in Node.js?
+
+A Buffer is a temporary storage area for binary data.
+Node.js does not support direct binary maniplation (like C/C++). So, Buffers handle raw data efficiently.
+Uesd mostly when dealing with fle structures, network data and binary protocols.
+
+
+CHATGPT EXPLANATION:
+
+A Buffer is:
+
+A fixed-size chunk of memory used to store raw binary data (bytes).
+
+Think of it as:
+
+an array of numbers (0–255)
+
+where each number = 1 byte
+
+allocated outside JavaScript’s normal memory
+
+
+
+2️⃣ Why Buffers exist in Node.js
+
+JavaScript was originally made for text and UI, not:
+
+files
+
+images
+
+audio
+
+network packets
+
+Node.js runs on V8, which:
+
+understands strings & objects
+
+does NOT handle raw binary efficiently
+
+But Node.js deals with:
+
+files 📁
+
+sockets 🌐
+
+streams 📡
+
+👉 So Node introduced Buffer to bridge this gap.
+
+
+
+3️⃣ What does “binary data” mean?
+
+Binary data = raw bytes
+
+Examples:
+
+image file (.png, .jpg)
+
+audio file (.mp3)
+
+video
+
+network packets
+
+encrypted data
+
+This is NOT text — it’s just bytes.
+
+
+Buffer is NOT resizable
+const buf = Buffer.alloc(3);
+buf.write("Hello");
+
+console.log(buf.toString());
+
+
+
+6️⃣ Creating an empty Buffer (manual memory)
+const buf = Buffer.alloc(5);
+console.log(buf);
+
+
+Output:
+
+<Buffer 00 00 00 00 00>
+
+
+5 bytes allocated
+
+initially filled with 0
+
+
+
+
+7️⃣ Writing into a Buffer
+const buf = Buffer.alloc(5);
+buf.write("Hi");
+
+console.log(buf);
+console.log(buf.toString());
+
+
+Output:
+
+<Buffer 48 69 00 00 00>
+Hi
+
+
+
+
+8️⃣ Reading binary data (File example)
+📁 Reading a file
+const fs = require("fs");
+
+const data = fs.readFileSync("image.png");
+console.log(data);
+
+
+Output:
+
+<Buffer 89 50 4e 47 ... >
+
+
+That is raw binary file data.
+
+If you tried to treat this as a string → 💥 corruption.
+
+
+
+
+4️⃣ Creating a Buffer
+Example 1️⃣ — From a string
+const buf = Buffer.from("Hello");
+console.log(buf);
+
+
+Output:
+
+<Buffer 48 65 6c 6c 6f>
+
+
+Those numbers are hexadecimal bytes.
+
+
+
+
+Example 2️⃣ — Convert Buffer back to string
+console.log(buf.toString());
+
+
+Output:
+
+Hello
+
+
+
+
+5️⃣ What’s actually inside the Buffer?
+const buf = Buffer.from("A");
+
+
+Character A:
+
+ASCII value → 65
+
+Hex → 41
+
+So buffer stores:
+
+<Buffer 41>
+
+
+💡 Buffers store bytes, not characters.
+
+
+
+
+Interview-level explanation (memorize this)
+
+A Buffer in Node.js is a fixed-size memory allocation used to handle raw binary data. Since JavaScript cannot efficiently process binary data, Node.js provides Buffers to work with files, streams, and network operations at the byte level.
+
+
+Course Content
+
+JS are UTF-16 encoded, making direct binary data handling ineffcient.
+Buffers store binary data outside V8's heap.
+Useful wehn wroking with: File System (fs module), Networking (TCP, UDP, WebSocket), Streams.
+
+
+
