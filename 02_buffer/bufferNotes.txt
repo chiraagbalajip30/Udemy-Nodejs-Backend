@@ -1,3 +1,6 @@
+Video-27 Buffer Thoery
+------------------------
+
 Data is stored in numbers according to our knowledge. But it also contains psaces like: 0101 010111 0001 0011. This is called as binary which has something of base 2.
 
 From binary, thhis gets converted to a number like 1,54, or some number according to the binary number, and then it will get converted to an alphabet m or something, and then hjoined as a sequence of letters. moiurya. Then an emojie or something. 
@@ -206,6 +209,12 @@ Course Content
 JS are UTF-16 encoded, making direct binary data handling ineffcient.
 Buffers store binary data outside V8's heap.
 Useful wehn wroking with: File System (fs module), Networking (TCP, UDP, WebSocket), Streams.
+
+
+
+------------------------------------ 
+Video-28 Buffer Coding Explanation
+---------------------------------
 
 
 
