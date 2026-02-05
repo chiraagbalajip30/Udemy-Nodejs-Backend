@@ -1,0 +1,127 @@
+ChatRoom - // This has all the functionalities
+
+index.js - // Driver Code which drives and utilises all these functionality
+
+class ChatRoom extends EventEmitter {
+    constructor() {
+        super()
+    }
+}
+
+// class ChatRoom extends EventEmitter - explanation below
+So every ChatRoom object automatically gets:
+
+event handling ability
+
+internal event storage
+
+async-safe event flow
+
+------
+
+Here, The constructor is a special method that runs automatically when an object is created.
+You use it to: initialize variables, set default state, prepare the object
+
+Here, "super" is used so that all the EVentEmitter constructors are created an everything.
+super() calls the parent class constructor (EventEmitter).
+Without super() → your ChatRoom would NOT actually emit events
+
+
+Interview-level explanation (memorize this)
+
+We use a class because a chat room is a stateful entity with behavior.
+It extends EventEmitter to gain event-driven capabilities.
+The constructor initializes the object, and super() is required to set up the parent EventEmitter internals so events work correctly.
+
+🧠 Ultra-short mental model (remember this)
+
+extends EventEmitter → inherit event powers
+
+constructor() → runs when object is created
+
+super() → turns event system ON
+
+-------
+In one sentence:
+
+It creates a ChatRoom class that has full event-handling capabilities.
+
+
+ this.users = new Set(); // to create all the active users
+
+
+ this.users = new Set();
+ So every chat room gets its own user list.
+
+ Why is it inside the constructor?
+ Because the constructor runs once per ChatRoom instance.
+ If you didn’t put it in the constructor, all rooms could accidentally share the same users (very bad).
+
+
+ Why this.users.add(user) is inside join()
+
+Because:
+
+joining a chat = becoming an active user
+
+this method updates the chat room’s state
+example:
+room.join("Alice");
+
+Behind the scenes:
+room.users.add("Alice");
+Now the chat room remembers Alice is active.
+
+
+
+ this.emit('join', user);
+ “Hey! A user just joined — notify everyone listening.”
+
+
+ 🧠 Interview-level explanation
+
+this.users stores the active users for each chat room instance.
+It’s initialized in the constructor so every chat room maintains its own state.
+The join method updates that state and emits a join event to notify listeners without tightly coupling the logic.
+
+ 
+
+ module.exports = ChatRoom;
+ Node.js uses the CommonJS module system:
+
+Each file is its own private scope
+
+Nothing is shared unless you explicitly export it
+
+Without exporting, this class is trapped inside this file.
+
+
+5️⃣ Why not write everything in one file?
+
+Because:
+
+unreadable
+
+unmaintainable
+
+impossible to scale
+
+impossible to test properly
+
+Professional Node.js apps are modular.
+
+
+6️⃣ Think of module.exports like this 🧠
+Without export:
+
+“This file is private.”
+
+With export:
+
+“Other files can import and use this.”
+
+
+7️⃣ Interview-ready explanation (use this)
+
+We export the ChatRoom class so it can be reused across different parts of the application, such as the server, socket handlers, or tests. Node.js files are modular, and exporting allows controlled sharing of functionality.
+
