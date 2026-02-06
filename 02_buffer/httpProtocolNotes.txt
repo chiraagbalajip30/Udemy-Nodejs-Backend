@@ -13,3 +13,48 @@ Then Server will be connected to the Database(Postgres/Mongo/Mysql).
 Once the Srver has done it's work, it returns something known as Response. 
 
 This is what is known as Request-Response Cycle.
+
+
+
+Video - 30
+-------------
+
+
+HTTP Methods - GET, POST, PUT, PATCH, DELETE
+HTTP Status Codes - (404 Not Found), etc.
+
+
+HTTP METHODS.
+---------------
+WHen the client sends a request, this request has somnething known as http method. Ex: rewquest can be of get type, post type, delete type, etc. IN order for client to get some work don, he must send a http request.
+
+GET - See all the tweets, watch a video, etc.
+POST - ccreate a tweet, upload a video, etc.
+PATCH - When client wants to update some existing data.
+DELETE - When client wants to delete some data.
+
+
+HTTP RESPONSE METHODS.
+------------------------
+
+WHen you send a request, the server sends a status code along with the request. Status codes are just a bunch of codes.
+
+
+200 - Ok 
+201 - Ok and created
+301 - Redirect
+400 - Bad Request
+401 - Unauthorized
+404 - Not Found
+500 - Internal Server Error
+
+Status Codes are ytou to tell what kind of response it is (Success, Error, Redirect, etc).
+
+
+From MDN docs: (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
+Informational responses (100 – 199)
+Successful responses (200 – 299)
+Redirection messages (300 – 399)
+Client error responses (400 – 499)
+Server error responses (500 – 599)
+
