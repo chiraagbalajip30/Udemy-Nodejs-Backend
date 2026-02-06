@@ -133,3 +133,61 @@ server.listen(8000, () => {
 
 FInal Code of Video-31  -  Creating basic HTTP Server with core Node.js Modules
 
+
+
+
+
+
+
+
+
+
+Video - 32
+------------
+HTTP Request Handling and Server Routing
+
+
+Whwenever you are sending a request, you have to specify what Method it is(GET, etc), and for every request you can send extra piece of data known as HEADER. They will be stored in the form of key:value pair. These are jsut an extra info sent along with the request.
+Example:
+Headers {
+    'Content-Type': 'application/json',
+    'Authorization': 'TOKEN'
+}
+
+Server can read these headers and process the request based on this context. 
+
+We can also add some extra info in the header like userName: 'mcb'.
+
+It cxan also have an body which is optional thing.
+For example, when you're making a post request, you must include the body.
+The body of an HTTP request contains any info being submitted to the web server, such as username and password, or any other data entered into a form.
+
+
+https://www.google.com/contact-us?q=xyz&sort=desc
+Here, 
+https - Scheme
+www - subdomain
+google.com - NAKED OR aPEX OR oRIGINAL dOMAIN
+contact-us - path
+
+q=xyz&sort=desc - Query Paramters(anything after question mark). These are some extra key-value pairs which can be sent along with the url.
+now we have two query poarameters.
+q=xyz and sort=desc
+
+
+Now, this part that is, www.google.com is for dns purpose that is it helps us reach properly to the server. Then after that part the remaining part, it is processed by the server to decide what info to provide based on thge path and query paramaters.
+
+ALl these we saw was just about what Request looks like, not the response.
+
+
+
+-----------------------------------------------
+
+
+Video - 33
+---------
+Building a custom Server with Node.js - Hands one
+
+
+
+
