@@ -219,3 +219,41 @@ you can add this in the console.log(for now because there is ot frontend, and po
 
 
 I have written in the code how to play with routes using switch case using node.js in index.js file.
+
+
+
+
+--------------------------------------------
+
+Video-34
+-------------
+Using API Clients to Test Node.js HTTP Endpoints
+
+Postman si the best but not required for now.
+
+Isomnia is also good but is very heavy. It is a open source.
+
+BRuno and Thunder Client are good.
+
+THUnder Client is good because it is an extension in vs code.
+
+Once you install the extension in your vs cdoe, you will see a thunder icon in ther left panel of vs code(at the bottom).
+Click that.
+
+In our example or code, we need to click:
+New Request
+ENter the url to check and then selecte the method.
+Select any headers if you want and play around a bit with the options.
+Then when you click Send, you will get the output here.
+This is one of the best api checker I have seen.
+
+You can also use Postman.
+
+
+----------------------------------------
+
+Video - 35
+----------
+BUild a Custom Task with Native HTTP Server in Node.js
+
+
