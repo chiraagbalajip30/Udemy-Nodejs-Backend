@@ -1,0 +1,15 @@
+Video - 29
+
+HTTP - Hypertext Transfer Protocol - A protocol to transfer information on the internet.
+
+There will be a client and a server. 
+Server is just a machine connected to the internet, which has a public ip adress and it has a public facing IP adress.
+Server is 24/7 on time, and has public faing static ip. Example ip - 10.24.1.2
+
+What happens is client sends a reqwuest to a server asking something or uploading something or loading something, etc. So before this, Authentication must be happened - like if this particulkar user is allowed to access. Then Authorization, then Validation and then the request will be Processed.
+
+Then Server will be connected to the Database(Postgres/Mongo/Mysql).
+
+Once the Srver has done it's work, it returns something known as Response. 
+
+This is what is known as Request-Response Cycle.
