@@ -189,5 +189,33 @@ Video - 33
 Building a custom Server with Node.js - Hands one
 
 
+Insstead of writing node file_name in the terminal again and agai, you ccan go to the package.json, and edit the scripts. You remove the exisitng one inside scripts, and write: start: "node index.js".
+Then when you want to run from the next time, write npm start.
+
+{
+  "name": "http-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --watch index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/node": "^25.2.1"
+  }
+}
+
+Now, if I add --watch after node, it ewill keep watching the server again and again, and there will be no need to run the commad again.
 
 
+
+fetch('/', {method: 'POST'})
+you can add this in the console.log(for now because there is ot frontend, and post request must be made frontend) and get POST request in the backend.
+
+
+
+I have written in the code how to play with routes using switch case using node.js in index.js file.
