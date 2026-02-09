@@ -104,4 +104,7 @@ Video - 40
 Book Store API - Setting up Routes and Controllers
 
 
+I have attached the explanation or tasks of this and next video in the file "bookStoreTask.txt". Look into it for tasks and then start solving them parallely.
+
+
 
