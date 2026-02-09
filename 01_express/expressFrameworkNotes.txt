@@ -1,0 +1,28 @@
+Video - 36
+-----------
+Intro to Express Framework and its Core Features
+
+
+
+The code that we have written till now is very messy. This will be more complex with more number of developers, db integration, etc only by using switch cses and makes it more messy.
+So you need some framework fro neat and readable code.
+
+So from now, we will be using Express.js. This internally uses only http to create servers, and provides a clean structure for writing code.
+
+------------------------------------------------
+
+Video - 37
+--------------------
+Creating your first Express App and File Structure Setup
+
+
+We created a folder 01_express. Then installed node modules and dependancies by typing "npm init -y" and later "npm i types/node". 
+We have to add an extra step here or install something called as "npm i express", which will basicaly download the express module or package for you.
+Then for extensions when clicked".", we need to install "@types/express".
+
+
+By default, express sends "200" status code. SO, if you want to change it, you can use status(code). Example:
+app.post("/tweets", (req, res) => {
+    res.status(201).end('TWeet Created Successfully');
+})
+
