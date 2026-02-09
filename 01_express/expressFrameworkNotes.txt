@@ -84,3 +84,24 @@ REST API Design Principles for Modern Backend Development
 
 
 
+Restfull API - Representational State Transfer.
+This is an architectural style, and it is not related to NODE.JS. It is just a style for designing API's for backend development.
+
+There are some principles:
+1. All the communication happens on the HTTP.
+2. Statelessness - There must be no state maintained on the server. That means, the memory of the sewrver cannot be used to store any user-related info or ay info. They must be stored in DB. The reason is, there might be scale-up or scale-dow in the memory(servers). At that time, if any data is stored in the server(memory), the dta may be lost forever. 
+3. It must follow Client-Server architecture. It means client and server must be a separate application. If somehting happens in frontend, backend shouldn't be responsible and vice-versa. For explantion, no html or css must be sent from the backend. The data must be sent through json to the frontend. 
+4. There should be Uniform Interface. We should use get, post, etc methods in a predictable way. Example: if we type get/tweets, it must be to fetch not to post. It is not logical if we write get and then post.
+5. Respponses sent from the backend must be Cachable.
+
+We will be usingf this principles in the future and must be used for high-performance applications.
+
+
+---------------------------------------------------
+
+Video - 40
+-----------
+Book Store API - Setting up Routes and Controllers
+
+
+
