@@ -1,0 +1,12 @@
+Video - 36
+-----------
+Intro to Express Framework and its Core Features
+
+
+
+The code that we have written till now is very messy. This will be more complex with more number of developers, db integration, etc only by using switch cses and makes it more messy.
+So you need some framework fro neat and readable code.
+
+So from now, we will be using Express.js. This internally uses only http to create servers, and provides a clean structure for writing code.
+
+
