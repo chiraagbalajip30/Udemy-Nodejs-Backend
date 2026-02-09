@@ -26,3 +26,61 @@ app.post("/tweets", (req, res) => {
     res.status(201).end('TWeet Created Successfully');
 })
 
+----------------------------------------
+
+Video - 38
+-------------
+Understanding Semantic Versioning in Node.js Projects
+
+
+
+{
+  "name": "01_express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --watch index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.2",
+    "express": "^5.2.1"
+  }
+}
+
+Here, there is something called as Semantic Versioning. "^5.2.1" whjat the numbers stand for and everything.
+
+
+Semantic Versioning has 3 Numbers also known as Bits.
+First Bit always tells us that it is the Major Version. 
+Second Bit is Minor Version.
+Third Bit is known as Patch Version.
+
+Patch: Incremented for backward-compatible bug fixes. These updates addres issues without addingd new functionality or breaking anything. For instance, 1.2.3 to 1.2.4 signals a bug fix that doesn't affect compatibility.
+
+Minor: Aded a new feature but old features will also work.
+
+Major: A lot of code changes must be done. Incremented when there are incompatible API changes. These changes may break existing functionality or require modifications in dependent code. For example, 1.0.0 to 2.0.0 indicates a significant change that may require users to update their code.
+
+"~5.2.1" - This symbol says that if in future, it will install all the patch updates automatically. Ex:  from 4.21.1 -> 4.21.x
+
+"^5.2.1" - Never ever update the Major Version. Ex: from 4.21.1 -> less than 5.0.0
+
+
+If any updates, when we do npm i, it goes to npm js.com which is a official website, and from there everything related to js will be installed.
+
+
+--------------------------------
+
+
+Video - 39
+-------------
+REST API Design Principles for Modern Backend Development
+
+
+
