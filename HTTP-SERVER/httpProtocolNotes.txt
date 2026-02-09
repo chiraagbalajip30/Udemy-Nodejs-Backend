@@ -4,7 +4,7 @@ HTTP - Hypertext Transfer Protocol - A protocol to transfer information on the i
 
 There will be a client and a server. 
 Server is just a machine connected to the internet, which has a public ip adress and it has a public facing IP adress.
-Server is 24/7 on time, and has public faing static ip. Example ip - 10.24.1.2
+Server has a 24/7 on time, and has public facing static ip. Example ip - 10.24.1.2
 
 What happens is client sends a reqwuest to a server asking something or uploading something or loading something, etc. So before this, Authentication must be happened - like if this particulkar user is allowed to access. Then Authorization, then Validation and then the request will be Processed.
 
@@ -26,7 +26,7 @@ HTTP Status Codes - (404 Not Found), etc.
 
 HTTP METHODS.
 ---------------
-WHen the client sends a request, this request has somnething known as http method. Ex: rewquest can be of get type, post type, delete type, etc. IN order for client to get some work don, he must send a http request.
+WHen the client sends a request, this request has somnething known as http method. Ex: rewquest can be of get type, post type, delete type, etc. IN order for client to get some work done, he must send a http request.
 
 GET - See all the tweets, watch a video, etc.
 POST - ccreate a tweet, upload a video, etc.
@@ -88,12 +88,12 @@ server.listen(8000, () => {
 });
 
 
-Hetre, youu are never sending a response(console.log is just a log statement not a response).
-So what happens is when you try to oepn the port 8000 by typing localhost:8000, the site will be struck forever.
+Here, you are never sending a response(console.log is just a log statement not a response).
+So what happens is when you try to open the port 8000 by typing localhost:8000, the site will be struck forever.
 
 const server = http.createServer(function (req, res) {
   console.log("I got an incoming request");
-  // insteasd of console, you can do db operastins, etc.
+  // instead of console, you can do db operastins, etc.
   res.writeHead(200);
   res.end("Thanks for visitng my server");
 });
@@ -103,7 +103,7 @@ res.writeHead(200, {'Content-Type': 'application/json'});  This is the actual li
 Here we have just shortebned and used it.
 
 
-Now i the above code, when you open that port 8000, you will get that console.log statement stating "Thanks for visiting kmy serve" or something.
+Now i the above code, when you open that port 8000, you will get that console.log statement stating "Thanks for visiting my server" or something.
 
 
 WHat is a Port?
@@ -158,7 +158,7 @@ Server can read these headers and process the request based on this context.
 
 We can also add some extra info in the header like userName: 'mcb'.
 
-It cxan also have an body which is optional thing.
+It can also have an body which is optional thing.
 For example, when you're making a post request, you must include the body.
 The body of an HTTP request contains any info being submitted to the web server, such as username and password, or any other data entered into a form.
 
@@ -209,12 +209,12 @@ Then when you want to run from the next time, write npm start.
   }
 }
 
-Now, if I add --watch after node, it ewill keep watching the server again and again, and there will be no need to run the commad again.
+Now, if I add --watch after node, it will keep watching the server again and again, and there will be no need to run the command again.
 
 
 
 fetch('/', {method: 'POST'})
-you can add this in the console.log(for now because there is ot frontend, and post request must be made frontend) and get POST request in the backend.
+you can add this in the console.log(for now because there is no frontend, and post request must be made frontend) and get POST request in the backend.
 
 
 
@@ -257,3 +257,11 @@ Video - 35
 BUild a Custom Task with Native HTTP Server in Node.js
 
 
+Task To DO:
+
+1. GET: / : Send simple hello from server message.
+2. GET: /contact-us : Send your email and contact number to the user.
+3. POST: /tweet : Do a fake DB operation and send the ack that it is done.
+4. GET: /tweet : Send all the tweets from fake DB to the user.
+
+Also, you need to log the incoming requests with timestamps in file named log.txt.
