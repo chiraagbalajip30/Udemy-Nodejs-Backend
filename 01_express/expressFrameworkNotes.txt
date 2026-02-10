@@ -107,4 +107,65 @@ Book Store API - Setting up Routes and Controllers
 I have attached the explanation or tasks of this and next video in the file "bookStoreTask.txt". Look into it for tasks and then start solving them parallely.
 
 
+Firstly, I created an folder for this task known as bookExpressStore andinstalled packages by typing "npm init -y". TLater, to install dependancies, instead of typing "@types/node", I typed "@types/node -D or @types/node --save-dev". What this does is it installs the dependancies within the devDependancies. The advantage of doing this is that, dependancies are required only during development time. After development, during the production time, we don't need this. It wouldn't be a problem if dones so. But it does that and acts as an advantage. So, we used this command.  
+
+
+// In Memory Database
+// Here i am violating the statelesness rules as i donot have a database.
+I am storing the data within the array in the index.js itself. Therefore, it violtes the rules.
+
+
+app.get("/", (req, res) => {
+    res.json(books);
+})
+Here, if we use res.end, it returns only plain text. But in real case scenario, we need to send arrays or something else, which must be capable to return key-value pairs or these kind of data. 
+Internally, express will do is convert this array into a json and sit all the appropraite headers, and send these books as a JSON to the frontend.
+
+
+// Routes
+app.get("/", (req, res) => {
+    // res.setHeader('x-bd', 'mcb'); // manually fixing the header
+    res.json(books);
+})
+
+You can also fix the header manually whichever you want. This is an extra header ig. SO, when you view in the headers colum in thunderclient or postman once you send the request to a certain url, you can see them there.
+Alos, it's a good practice if you start the custom header with "x".
+
+
+Header                Value
+x-powered-by          Express
+This is what you will see in the headers. So it's not an extra header, it is the header.
+
+
+app.get("/books/:id", (req, res) => {
+    const id = req.params.id;
+    const book = books.find((e) => e.id === id);
+
+    if (!book) {
+        return res.status(404).json({ error: "Book not found" });
+    } else {
+        return res.json(book);
+    }
+})
+Here, we are trying to send a req to slect one single books based on id. SO, we annotate it by using "/:id". Later, we use req.params to grab the id from the parametrs of the request. by allocating it to the const variable such as const id. (There can be multiple params as well like /:id/:r/:a, etc.). Later, we have to find that variable(id), and match that to the books.id. 
+
+We wont get the output because we have a problem here. The id must be converted to or must be a string. SO we have two options:
+1.  const book = books.find((e) => e.id === id);  Remove === and make it ==.
+2. This is the best way. We must add a parseInt const id = req.params.id; here. Now you will get the id of the respective book entered. BUt we can make it more clean or professional by adding a loop and by letting users know that, id must be only in numer format, not others like alphabets, etc. So to do that,  add a loop condition to check if the enterd id is not a number using:
+ if(isNaN(id)){
+    pass the 400 code, and an error message
+  }
+
+
+  -------------------------------------
+
+
+  Video - 41
+  -----------
+Book Store API - Finalizing CRUD Features and Testing (Part-2)
+
+
+
+
+
 
