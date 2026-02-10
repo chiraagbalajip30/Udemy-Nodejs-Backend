@@ -101,7 +101,7 @@ We will be usingf this principles in the future and must be used for high-perfor
 
 Video - 40
 -----------
-Book Store API - Setting up Routes and Controllers
+Book Store API - Setting up Routes and Controllers(Part-1)
 
 
 I have attached the explanation or tasks of this and next video in the file "bookStoreTask.txt". Look into it for tasks and then start solving them parallely.
