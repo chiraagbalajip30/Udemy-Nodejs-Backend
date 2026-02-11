@@ -1,0 +1,95 @@
+Video - 44
+-----------
+Creating and Integrating Custom Modules in Node.js Projects
+
+
+
+How to define User Defines or Custom Modules.
+
+
+We will write related info in ne module, and the consol.log i another module.
+
+SO, if i want the console.log in this module to work with the functionalities in other module, we need to export it.
+
+1. Named export
+2. Default export
+
+
+1. amed Export - We can name and export each and every block or function.
+
+
+Remeber that we had talked about wrapper in the early video of the course?
+
+function wrapper (exports, module, require, __filename, __dirname) {
+    // user defined code
+}
+
+So, using this exports, we can actually do a nameed export. 
+
+exports.myAddFunction = function add(a, b) {
+  return a + b;
+};
+
+
+Now to import i other modules:
+
+const value = require("./math");
+console.log(value.myAddFunction(2, 5));
+
+Here we imported the module, and then called the function name(myAddFunction) by attaching it to the value using . operator.
+
+const value = require("./math");
+
+// console.log(add(2, 5));
+console.log(value.myAddFunction(2, 5));
+
+console.log(value.mySubtractFunction(10, 5));
+
+console.log(value.myMultiplyFunction(10, 5));
+
+console.log(value.myDivideFunction(10, 5));
+
+This is one way.
+
+
+The other way is to exttract them at the beginning.
+
+const { myAddFunction, mySubtractFunction, myMultiplyFunction, myDivideFunction } = require("./math");
+
+console.log(myAddFunction(2, 5));
+console.log(mySubtractFunction(10, 5));
+console.log(myMultiplyFunction(10, 5));
+console.log(myDivideFunction(10, 5));
+
+
+
+
+2. Default Export.
+
+There can be only one default export in one module.
+Default exports don't have any name.
+We will use module in the wrapper function.
+
+No need to name it while importing. We can name it whatever we want to and it always points to that function.
+
+
+// Default Export in math.js where this si written
+module.exports = function () {
+    console.log("Hey, I am default");
+};
+
+
+
+// Default Export in index.js where it is being exported
+
+const value = require("./math");
+
+console.log(value());
+
+
+But ig, we cannot call both default and named functions at once.
+
+
+
+
+
