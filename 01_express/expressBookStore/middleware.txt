@@ -1,3 +1,8 @@
+Video - 42
+-----------
+Understanding Middleware Functions and their Execution in Express.js
+
+
 | Method  | Usually has body?        | express.json() useful? | req.body typical value           | Your code cares about req.body? |
 |---------|--------------------------|------------------------|-----------------------------------|----------------------------------|
 | GET     | No                       | No                     | undefined                         | No                               |
@@ -89,3 +94,41 @@ One moreis Authorization. Let's say user is logged in but is restricted to acess
 
 
 Recommended to go through the docs of express middleware. 
+
+
+
+---------------------------------------------------
+
+
+Video - 43
+------------
+Advanced Middleware Concepts and Custom Middleware Implementation
+
+
+Created index1.js for source code of this topic.
+
+
+You can have 2 kinds of middlewares:
+1. Global Middlewares - which runs everytime irrespective of the routes.
+
+2. Route-Level Middlewares - This middlewares can be used only for specific routes.
+
+3. Router Middlewares - Next Video.
+
+
+4. A logic(middleware) to match that particular path.
+Also, you can have a middleware for that particular route for all get, post, etc  /books
+
+Example:
+app.use('/books', (req, res, next) => {});
+
+
+-------------------------------------------------
+
+
+Video - 44
+-----------
+Creating and Integrating Custom Modules in Node.js Projects
+
+
+
