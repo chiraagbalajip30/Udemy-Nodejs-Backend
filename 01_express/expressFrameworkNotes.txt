@@ -172,7 +172,10 @@ The body has to be processed based on the content-type that is being sent by the
 // Middlewares(Plugins)
 app.use(express.json());
 
-This is a plugin, where we attach it use app anduse express.json. What it does is it converts the body type of frontend message or request to the desired type, and gives it to the backend. 
+This is a plugin, where we attach it use app anduse express.json. What it does is it converts the body type of frontend message or request to the desired type, and gives it to the backend.
+
+Actual Explanation:
+It does something where it uses some headers :Content_type":"application/json", and converts the body into the json, and give us the access as the body so that if there is a POST Route it helps us to get what inside the body using req.body.
 
 
 So, we need to check if title or author is been sent, and is not an empty string. If not, we need to generate id for the new book by doing books.length that is, it gives the number of books present plus one.

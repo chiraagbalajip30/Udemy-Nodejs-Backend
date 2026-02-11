@@ -1,0 +1,91 @@
+| Method  | Usually has body?        | express.json() useful? | req.body typical value           | Your code cares about req.body? |
+|---------|--------------------------|------------------------|-----------------------------------|----------------------------------|
+| GET     | No                       | No                     | undefined                         | No                               |
+| POST    | Yes                      | Yes                    | { title: "...", ... }             | Yes                              |
+| PUT     | Yes                      | Yes                    | object                            | Yes                              |
+| PATCH   | Yes (partial)            | Yes                    | object                            | Yes                              |
+| DELETE  | Almost never             | No                     | undefined                         | No                               |
+
+
+
+
+Middleware in Node.js is very powerful and important to understand. 
+
+
+app.use(express.json());
+It does something where it uses some headers :Content_type":"application/json", and converts the body into the json, and give us the access as the body so that if there is a POST Route it helps us to get what inside the body using req.body.
+
+
+Clear Explanation of Middleware:
+
+User sends a request through express server. Now, express has been stored inside app. So, app has all the acess, and all the incoming request will go to app. So, we can call app as a Request Handler. 
+What happens next is, the app reads your request that is if it is a post request, get request, and also on which path you are sending. It smartly figures out which code to be executed based on the route i.e., Get /books means app.get(/books), GET /books/:is means app.get(/books/:id). 
+
+So, the flowchart is user -> app -> route. So, we can use the existing or create our own middleware between app -> Route. Every time there is a req from user it goes to app. Then from app, there is no necessity to directly go or send to Route. It goesor can go to Middleware, and then from Middleware to the Route. This middleware can do anything like db operations, logging, etc. 
+
+Def:
+Middleware is a piece of code that runs in every request and which sits between app and route. 
+
+Site Def shown in course:
+Middleware functions are functions that have access to the request object, the response object and the next function in the application's request-response cycle. The next function is a function in the Express router which, when invoked, executeds the middleware succeeding the current middleware. 
+If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function. Otherwise, the request will be left hanging. 
+
+Middleware functions can perform the following tasks:
+1. Executes any code.
+2. Make changes to the request and the response objects.
+3. End the request-response cycle.
+4. Call the next middleware in the stack.
+
+
+Writing our Own Middleware
+
+
+// Writing our own Middleware
+app.use(function(req, res, next) {
+  console.log("I am Middleware A");
+  return res.json({ message: "Boom! "});
+});
+
+
+If we do this, it will give only this as the output whichout moving to the next one. 
+
+
+
+app.use(function(req, res, next) {
+  console.log("I am Middleware A");
+  next();
+});
+
+Now, it moves onto next middleware functions or next tasks remaing in the code. 
+What this does is it executes this log statement in the code, and moves onto display the books request based on path(whatever i ask in thunderclient that is get, post, ect. First this console.log gets executed, and then moves onto the code).
+
+
+
+// Writing our own Middleware
+app.use(function (req, res, next) {
+  console.log("I am Middleware A");
+  next();
+});
+
+// another middleware
+app.use(function(req, res, next) {
+  console.log("I am Middleware B");
+  return res.json({ message: "Boom! I am B "});
+})
+
+same happens here. First order is complete all teh middlewares, and then goes to the paths. Here, it will move from 1st to 2nd middleware, but it won't go to paths from 2nd middleware because it is returning something. So the route or path wont get executed. To avoid these, we have to place next(0 instead of return statement. 
+
+
+NOTE : Middleware always runs in sequences. 
+
+Req -> Middlewares -> Path -> Res.
+
+
+Practical exampples where we use Middleware:
+
+Check Authentication - We can write a logic for login. If not logged in, the req gets back from the middlewware to the inital stage. If user is logged in, it goes to middleware, and then will be sent to the next function or middleware ot to the path.
+
+One moreis Authorization. Let's say user is logged in but is restricted to acess certain parts or commands like ADMIn roles, etc. 
+
+
+Recommended to go through the docs of express middleware. 
