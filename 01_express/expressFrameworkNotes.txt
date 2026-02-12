@@ -185,6 +185,39 @@ books.push(book);
 Later, we will push the created book to books database.
 
 
+------------------------------------------
+
+
+Video - 45
+------------
+
+
+We will now create a file named "books.routes.js" and put all the routes related logic inside this.
+
+Instead of using app.get or post, we will use router .get or post,etc. The same code which was present in index.js is cut, and have been pasted here inside book.routes.js. The code which was earlier in index.js is been copied into a new file called "duplicateindex.js". 
+
+Now, I removed all the routes logic from index.js and placed it within book.routes.js file. Then, I removed "/books" from the routes liek router.delete("/:id", (req, res) => {}) or router.post("/", (req, res) => {}), and placed the "/books" in indexx.js file which is, app.use("/books", bookRouter); This is the only route logic in the index.js which says anything that starts with "/books", move that route to bookRouter that is book.routes.js file. 
+
+// The array or the data have been moved to book.js file within db folder, and will be imported in book.routes.js file as it is used there.
+
+
+We have moved everything including Custom iddlewares nto a separate filr, and we have exported it into index.js file.
+
+Compare the current code with old code which is in duplicateindex.js file for better understanding. 
+
+
+
+
+-------------------------------------------------
+
+
+Video - 46
+------------
+The Model-View-Controller(MVC) Pattern in Scalable API architecture
+
+
+
+
 
 
 
