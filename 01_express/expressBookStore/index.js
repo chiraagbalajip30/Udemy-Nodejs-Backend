@@ -14,6 +14,7 @@ app.use(express.json());
 // so now we have the body
 app.use(loggerMiddleware);
 
+
 // Routes are moved to books.routes.js file from here. Now we will import that and use it here.
 app.use("/books", bookRouter);
 
