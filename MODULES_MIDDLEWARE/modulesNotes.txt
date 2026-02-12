@@ -68,6 +68,7 @@ console.log(myDivideFunction(10, 5));
 
 There can be only one default export in one module.
 Default exports don't have any name.
+Default exports don't have any name.
 We will use module in the wrapper function.
 
 No need to name it while importing. We can name it whatever we want to and it always points to that function.
