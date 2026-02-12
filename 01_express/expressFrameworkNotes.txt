@@ -217,10 +217,14 @@ The Model-View-Controller(MVC) Pattern in Scalable API architecture
 
 
 
+MVC - In your app there will be 3 components:
+1. Models -  Database or Entity. We have have a atble known as Books for example. Based on conditions it stores and gives data.
 
+2. Views - What users see i.e., front end. React, HTMl, CSS
 
-
-
+3. Controllers - What needs to be done. Interacting with the db.
+ex - When users wants to get the books, he makes call to controllers. that is View ->Controller -> Models.
+So, Controllers are like Middlewares. 
 
 
 
