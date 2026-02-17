@@ -66,4 +66,27 @@ Prisma = JS -> Any Database ie.e, JS -> MongoDB, PostgresSQl, MySQL,etc.
 
 
 
+video - 49
+-----------
+Setting Up PostgreSQL with Docker for Local Development
+
+
+PostgresSQl is one of the most powerful SQL, and almost all the companies use this. 
+
+There are 3 methods to download the PostgresSql:
+1. Full Download - Go to the official PostgresSql website, and download the suitable version for windows. The disadvantage of this is that you can only use one database as, you have installed it in the system, which is not right and won't be suitable in the future.
+You can download this from -  https://www.postgresql.org/download/windows/ link.
+
+2. We can download postgressql, and setup and store it in cloud. Then we can connect our local machine to the cloud. So, there are two disadvantages from this: 1. We will incur a cost.  2. There will be a latency in the usage as the database is hosted i the cloud, and the data fetching will become late.
+You can use superbase -  https://supabase.com/  for this. How it works is first we need to sign in, then create a project. It will give us the username, password and the URL using which we can connect our local machine to the database.
+
+3. Hybrid Approach - We can use something called as Docker. Inside the Docker, we can spin up the postgressql instance kind of virtual environment. We are not installing it on our system, we are just running it on the virtual environment fromour sytem. Once our work is done, we can delete the created instance, and it won't harm our local system. 
+We can download it by :  https://www.docker.com/ , and then click for windows.
+
+
+After that, install and run few commands to make it properly work, and then check the version in te terminal.
+
+Now, we have to set up the postgres inside the docker.
+
+
 
