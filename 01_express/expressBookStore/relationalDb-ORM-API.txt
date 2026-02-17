@@ -1,3 +1,7 @@
+Video - 47
+-----------
+Explanation of Relational and Non-Relational DBs
+
 To begin with, let's understand what the applications in real-world look like.
 So, client(through frontend) interacts with the server(which is currently being built in Node.js).
 The purpose of the server is to accept or take the request, and do some processing on the response, and hen return back the response. 
@@ -31,4 +35,35 @@ Here,there are no relations. If i try to access gender columns without initalizi
 Database Examples - MongoDB.
 
 Here, in this course, we will learn Postgres first and later move onto MongoDB because, learning structured db is very much required, and it gives proper idea about the database. Once we learn Relational DB, then Non-Relational Db would be a piece of cake to learn.
+
+
+
+Video - 48
+-----------
+What is an ORM and why it is used in Application Development
+
+
+Drizzle, Knex and Prizma is an ORM, and there are many more.
+
+ORM - Object Relation mapper/mapping.
+
+Google Def:
+ORM - Is a piece of software designed to translate between the data representations used by databases and those used in object-oriented programming. 
+
+Ex - I can speak Kannada language. Tere is an person whose is deaf and dumb. Now, we need to communicate to them. So now we will build a software, which coverts Knnada language to braile language. Now, the communication is very easy with the help of ORM.
+
+
+Real-world:
+Now, we have a javascript piece of code, and we have an postgres db. Now if we want to create a user table, we will write the user within the dict and aign them. Now, we want to store this inot DB. But we cannot sedn them directly into the db as it couldn't understand. Nw we will install ORM because it has connection to the db. Now this ORM is Javascript ->(to) Postgres. Now we can take this objet and give t to the ORM. Now this ORM will convert this object into SQL query, and then stores this into the postgres table. Now, let's say we want to read the user, then ORM will fire a query to read it like: SELECT * FROM USERS:, and then it returns some tabular data. Now, this sybtax is not understandable by hJS. Now this ORM converts into JS Syntax, and gives it to the JS. 
+
+SO, we can use Dirzzle for JS -> MySQL and JS -> POSTGRES. 
+SImilarly, JS -> MongoDB, we use Mongoose.
+Then from Python -> Postgres, we use SQLAlchemy. 
+Python -> MongoDb, we use PI Mongo.
+There are many ORM's available for related language use.
+Prisma = JS -> Any Database ie.e, JS -> MongoDB, PostgresSQl, MySQL,etc.
+
+
+
+
 
