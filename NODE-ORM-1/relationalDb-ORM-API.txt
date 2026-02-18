@@ -54,14 +54,99 @@ Ex - I can speak Kannada language. Tere is an person whose is deaf and dumb. Now
 
 
 Real-world:
-Now, we have a javascript piece of code, and we have an postgres db. Now if we want to create a user table, we will write the user within the dict and aign them. Now, we want to store this inot DB. But we cannot sedn them directly into the db as it couldn't understand. Nw we will install ORM because it has connection to the db. Now this ORM is Javascript ->(to) Postgres. Now we can take this objet and give t to the ORM. Now this ORM will convert this object into SQL query, and then stores this into the postgres table. Now, let's say we want to read the user, then ORM will fire a query to read it like: SELECT * FROM USERS:, and then it returns some tabular data. Now, this sybtax is not understandable by hJS. Now this ORM converts into JS Syntax, and gives it to the JS. 
+Now, we have a javascript piece of code, and we have an postgres db. Now if we want to create a user table, we will write the user within the dict and assign them. Now, we want to store this into DB. But we cannot send them directly into the db as it couldn't understand. Now we will install ORM because it has connection to the db. Now this ORM is Javascript ->(to) Postgres. Now we can take this objet and give it to the ORM. Now this ORM will convert this object into SQL query, and then stores this into the postgres table. Now, let's say we want to read the user, then ORM will fire a query to read it like: SELECT * FROM USERS:, and then it returns some tabular data. Now, this syntax is not understandable by hJS. Now this ORM converts into JS Syntax, and gives it to the JS. 
 
-SO, we can use Dirzzle for JS -> MySQL and JS -> POSTGRES. 
+SO, we can use Drizzle for JS -> MySQL and JS -> POSTGRES. 
 SImilarly, JS -> MongoDB, we use Mongoose.
 Then from Python -> Postgres, we use SQLAlchemy. 
 Python -> MongoDb, we use PI Mongo.
 There are many ORM's available for related language use.
-Prisma = JS -> Any Database ie.e, JS -> MongoDB, PostgresSQl, MySQL,etc.
+Prisma = JS -> Any Database i.e, JS -> MongoDB, PostgresSQl, MySQL,etc.
+
+
+
+CHATGPT Version:
+-----------------
+
+✅ Proper Explanation (Refined Version)
+
+In a real-world backend application, we usually work with JavaScript code and a database like PostgreSQL.
+
+When we create data in our application, we typically represent it as a JavaScript object.
+
+For example:
+
+const user = {
+  email: "a@b.com",
+  password: "123456"
+};
+
+
+However, databases do not understand JavaScript objects directly. They only understand SQL queries.
+
+To bridge this gap, we use an ORM (Object Relational Mapping) tool such as Prisma or Sequelize.
+
+How ORM works when storing data
+
+1️⃣ We pass the JavaScript object to the ORM.
+
+2️⃣ The ORM converts the object into an SQL query like:
+
+INSERT INTO users (email, password)
+VALUES ('a@b.com', '123456');
+
+
+3️⃣ The database executes this query and stores the data in a table.
+
+How ORM works when reading data
+
+1️⃣ We request data using ORM methods like:
+
+prisma.user.findMany();
+
+
+2️⃣ The ORM generates an SQL query such as:
+
+SELECT * FROM users;
+
+
+3️⃣ The database returns rows of data (tabular format).
+
+4️⃣ The ORM converts these rows into JavaScript objects, which our application can easily use.
+
+Example result:
+
+[
+  { id: 1, email: "a@b.com", password: "123456" }
+]
+
+Why we use ORM
+
+ORM makes development easier because:
+
+We don’t have to write SQL for basic operations
+
+Code becomes cleaner and easier to maintain
+
+It reduces bugs
+
+It improves developer productivity
+
+Do we always avoid SQL?
+
+No. In real-world applications:
+
+Most common operations use ORM methods
+
+Complex or performance-critical queries may still use raw SQL
+
+Real application flow
+JavaScript Object → ORM → SQL Query → Database
+Database Result → ORM → JavaScript Object
+
+Industry practice
+
+This is the standard approach used in most modern backend applications. Developers typically use an ORM along with SQL knowledge for building scalable systems.
 
 
 
@@ -131,6 +216,255 @@ To view the raw file, we need to run the command:
 
 Video - 50
 -----------
+Installing and Configuring Drizzle ORM with PostgresSQl
+
+https://orm.drizzle.team/docs/get-started/postgresql-new
+
+
+
+
+Why are we using Drizzle instead of Prisma, or other ORMs?
+Choosing ORM is a big decision.
+Prisma is suitable for all languages, but the disadvantage is that it is not that efficient for making queries. 
+If we use Prisma for suppose extracting or getting details of a user and his friends, we must write two queries. Wheras, in Drizzle, we can do those two operations in a single query.
+Prisma is good because we can switch between different db with one click. But the disadvantage is that it has performance issues. It has difficulty in Foreign Relationship Join. Prism team is fixing it now.
+
+Drizzle is built on top of Prisma. It internally uses Prisma, but has more efficient querying system with Postgres and MySQL. They don't support NOSQL. 
+
+
+Basic File Structure
+---------------------
+
+📦 <project root>
+ ├ 📂 drizzle
+ ├ 📂 src
+ │   ├ 📂 db
+ │   │  └ 📜 schema.ts
+ │   └ 📜 index.ts
+ ├ 📜 .env
+ ├ 📜 drizzle.config.ts
+ ├ 📜 package.json
+ └ 📜 tsconfig.json
+
+
+
+Step 1 - Install node-postgres package
+--------
+Create drizzle named folder, create a drizzle.config.json file in the root directory and then Install - Package.json(npm init), npm i drizzle-orm pg(drizzle-orm is used fo our interaction, and pg is postgres package installlation).
+
+Step 2 - Setup connection variables
+
+Create a .env file in the root of your project and add your database connection variable:
+-----------------------------------------
+Now we want to setup dotenv variables, which will be explained later.
+
+Step 3 - Connect Drizzle ORM to the database
+
+Create a index.js file in the src directory and initialize the connection:
+--------
+Now, we have to create a db folder, and create a index.js file within it. 
+Within index.js, we must import drizzle-orm/node-postgres. These can be found in the docs. This is for connection of Drizzle ORM to the database[const { drizzle } = require("drizzle-orm/node-postgres");]. 
+
+Now we have to attach db to the drizzle, and this is the format:  // postgress://<username>:<password>@<host>:<port>/<db_name>
+We have to put our details instead of these to make a url. 
+
+
+const { drizzle } = require("drizzle-orm/node-postgres");
+
+// const db = drizzle(process.env.DATABASE_URL!); this is the syntax in docs
+// postgress://<username>:<password>@<host>:<port>/<db_name> //  pattern to be followed
+
+const db = drizzle("postgres://postgres:admin@localhost:5432/myDb");
+
+module.exports = db;
+
+
+Step 4 - Create a table
+
+Create a schema.ts file in the src/db directory and declare your table:
+-------
+Now, we have to create a table. That is, we have to define a schema as we are working on structured schema or db. 
+
+Now let us create a schema.js file inside drizzle folder. 
+
+
+Now we will import some data types, and then create a table. 
+
+const {pgTable, integer, varchar} = require( "drizzle-orm/pg-core");
+
+const usersTable = pgTable("users", {
+    id: integer().primaryKey(),
+    name: varchar({length: 25}).notNull(),
+    email: varchar({length:255}).notNull().unique(),
+});
+
+// exporting an object so written within {}
+module.exports = {
+    usersTable
+}
+
+
+pgTable is a function provided by Drizzle ORM that is used to define a table schema for PostgreSQL.
+
+
+✅ pgTable → function to define PostgreSQL table schema
+✅ Converts JS schema → SQL structure
+✅ {} in export → exporting as an object with named properties
+✅ Allows exporting multiple things
+
+
+
+Step 5 - Setup Drizzle config file
+
+Drizzle config - a configuration file that is used by Drizzle Kit and contains all the information about your database connection, migration folder and schema files.
+
+Create a drizzle.config.ts file in the root of your project and add the following content:
+----------------------------
+
+Install drizzle-kit first by typing "npm in drizzle-kit" in the terminal.
+
+You can see these in package.json:
+"drizzle-kit": "^0.31.9",
+"drizzle-orm": "^0.45.1",
+
+D/b these two is: 
+drizzle-orm  -  Send and Recieve data from DB
+drizzle-kit  -  Send your schema to the db or you have to hav UI for your db.
+
+
+dialect: "postgresql",  -  db i am going to use
+
+out: "./drizzle",  -  where to keep all my related schemas and everything like that
+
+schema: "./drizzle/schema.js",  -  Where are you going to store the data.
+
+
+db/index.js - This file is used when you need to send the data to the database, or receive it.
+We will ignore this for now.
+
+
+Step 6 - Applying changes to the database
+You can directly apply changes to your database using the drizzle-kit push command. This is a convenient method for quickly testing new schema designs or modifications in a local development environment, allowing for rapid iterations without the need to manage migration files:
+
+npx drizzle-kit push
+------------------------------------------------
+
+Now the docker doesn't know that there is a schema of users. 
+So, now we are going to ask drizzle.config.js file "Can you please read my Schema File?".
+
+This can be done by the step-6 command. 
+
+
+After running this, you must type "npx drizzle-kit studio". This gives you the link for Ui as well. 
+It gave me this link:  https://local.drizzle.studio
+
+
+Now let uss say we want to do something or create a user where ORM will come. 
+
+Create an index.js File in the root directory, and connect the schema dna db by exporting the modules within this files, and then run the file: "node index.js".
+
+Code for this explanation:
+
+const db = require("./db/index");
+const { usersTable } = require("./drizzle/schema");
+
+async function getAllUsers() {
+  const users = await db.select().from(usersTable);
+  console.log(`Users in DB`, users);
+  return users;
+}
+
+async function createUser({ id, name, email }) {
+  await db.insert(usersTable).values({ id, name, email });
+}
+
+createUser({ id: 1, name: "MCB", email: "mcb@123.com" });
+createUser({ id: 2, name: "P", email: "p@123.com" });
+
+
+
+
+Then when i comment createUsers, and type "getAllUsers", then i will get output in log as an object:
+
+Users in DB [
+  { id: 1, name: 'MCB', email: 'mcb@123.com' },  
+  { id: 2, name: 'P', email: 'p@123.com' }       
+]
+
+Output is an Object because Drizzle is doing that.
+
+So, this is the overall job of the rizzle ORM. It converts the JS into SQL query, and returns us back an object. 
+
+This is the full setup of an Drizzle ORM.
+
+But in the upcoming videos or upcoming videos what we are going to do is, set up an Express REST application, and all the creations and updations has to go through the Neck Express API endpoints. That is, we are going to create an endpoint for getting an user, creating an user, etc.  
+
+
+Now we have left one thing. It is not a good idea to harcode url in our application. It becomes easy to hack when published. So we maintain dotenv file. Here we place our sensitive data.  
+
+.env is never given to someon or given to anyone. But it is read through installing dotenv package. So install it now by running:  "npm i dotenv".
+
+require("dotenv/config");
+ //tries to read the dotenv file before everything else. It must be placed at the beginning of the file after all the exports are done. 
+
+The above line readsit and makes it available everywhere within the code.
+
+Now we will remove the link in schema and replace it with:
+const db = drizzle(process.env.DATABASE_URL);
+
+
+require("dotenv/config");
+const db = require("./db/index");
+const { usersTable } = require("./drizzle/schema");
+
+// dotenv.config(); //tries to read the dotenv file before everything else
+
+async function getAllUsers() {
+  const users = await db.select().from(usersTable);
+  console.log(`Users in DB`, users);
+  return users;
+}
+
+async function createUser({ id, name, email }) {
+  await db.insert(usersTable).values({ id, name, email });
+}
+
+// createUser({ id: 1, name: "MCB", email: "mcb@123.com" });
+// createUser({ id: 2, name: "P", email: "p@123.com" });
+
+getAllUsers(); // Output is an Object because Drizzle is doing that.
+
+
+
+require("dotenv/config");
+const { defineConfig } = require("drizzle-kit");
+
+
+const config = defineConfig({
+  out: "./drizzle",
+  schema: "./drizzle/schema.js",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
+  },
+});
+
+module.exports = config;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
