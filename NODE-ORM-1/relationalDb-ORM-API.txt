@@ -80,13 +80,58 @@ You can download this from -  https://www.postgresql.org/download/windows/ link.
 2. We can download postgressql, and setup and store it in cloud. Then we can connect our local machine to the cloud. So, there are two disadvantages from this: 1. We will incur a cost.  2. There will be a latency in the usage as the database is hosted i the cloud, and the data fetching will become late.
 You can use superbase -  https://supabase.com/  for this. How it works is first we need to sign in, then create a project. It will give us the username, password and the URL using which we can connect our local machine to the database.
 
-3. Hybrid Approach - We can use something called as Docker. Inside the Docker, we can spin up the postgressql instance kind of virtual environment. We are not installing it on our system, we are just running it on the virtual environment fromour sytem. Once our work is done, we can delete the created instance, and it won't harm our local system. 
+3. Hybrid Approach - We can use something called as Docker. Inside the Docker, we can spin up the postgressql instance kind of virtual environment. We are not installing it on our system, we are just running it on the virtual environment from our sytem. Once our work is done, we can delete the created instance, and it won't harm our local system. 
 We can download it by :  https://www.docker.com/ , and then click for windows.
 
 
 After that, install and run few commands to make it properly work, and then check the version in te terminal.
 
 Now, we have to set up the postgres inside the docker.
+
+
+
+Now I created a folder called NODE-ORM, and created a docker-compose.yml file inside it, and also pushed the notes of relationaldb ffrom other foler to this folder.
+
+After creating docker-compose.yml, you can see the docker logo on the left hand side of the docker-compose.yml file. 
+
+What is a docker-compose.yml file?
+
+A docker-compose.yml file is a configuration file used by Docker Compose to define and run multiple containers together.
+
+Think of it like a blueprint that tells Docker:
+
+What services to run (database, backend, frontend)
+Which images to use
+Ports
+Environment variables
+Volumes
+Networking
+
+
+We can assign the required dtabase that is, postgres, and then mention the required version to be instaled like 17.4. Later, the port that runs postgres db is 5432. Then we must declare environment, which contains te credentials for this particular postgres.
+
+Then we have to type "docker compose up" for this to run continously.
+
+Immportant:   - 5432:5432  there must be a space after "-", and then the port must be written.
+
+
+So once I start running this and press Ctrl+C, it stops working(terminal ends and the postgresdb in docker stops running, and can be observed as the dot is unfilled).
+What can be done is, instead of running "docker compose up" command, we can run "docker compose up -d", and you can observe pressing ctrl+C wouldn't end the process or stop the container from running. Then to stop this command, we can type "docker compose down".
+
+Now, docker setup is completed.
+
+So, the benifit of docker is that we can define mongodb or other db's and can run al of them by mentioning in this file.
+
+To view the raw file, we need to run the command:
+"cat docker-compose.yml".
+
+
+-----------------------------------------------
+
+
+Video - 50
+-----------
+
 
 
 
