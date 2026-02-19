@@ -201,7 +201,7 @@ Immportant:   - 5432:5432  there must be a space after "-", and then the port mu
 
 
 So once I start running this and press Ctrl+C, it stops working(terminal ends and the postgresdb in docker stops running, and can be observed as the dot is unfilled).
-What can be done is, instead of running "docker compose up" command, we can run "docker compose up -d", and you can observe pressing ctrl+C wouldn't end the process or stop the container from running. Then to stop this command, we can type "docker compose down".
+What can be done is, instead of running "docker compose up" command, we can run "docker compose up -d", and you can observe pressing ctrl+C wouldn't end the process(db) or stop the container from running. Then to remove db, we can type "docker compose down".
 
 Now, docker setup is completed.
 
@@ -226,7 +226,7 @@ https://orm.drizzle.team/docs/get-started/postgresql-new
 Why are we using Drizzle instead of Prisma, or other ORMs?
 Choosing ORM is a big decision.
 Prisma is suitable for all languages, but the disadvantage is that it is not that efficient for making queries. 
-If we use Prisma for suppose extracting or getting details of a user and his friends, we must write two queries. Wheras, in Drizzle, we can do those two operations in a single query.
+If we use Prisma for suppose extracting or getting details of a user and his friends, we must write two queries. Whereas, in Drizzle, we can do those two operations in a single query.
 Prisma is good because we can switch between different db with one click. But the disadvantage is that it has performance issues. It has difficulty in Foreign Relationship Join. Prism team is fixing it now.
 
 Drizzle is built on top of Prisma. It internally uses Prisma, but has more efficient querying system with Postgres and MySQL. They don't support NOSQL. 
@@ -250,13 +250,17 @@ Basic File Structure
 
 Step 1 - Install node-postgres package
 --------
-Create drizzle named folder, create a drizzle.config.json file in the root directory and then Install - Package.json(npm init), npm i drizzle-orm pg(drizzle-orm is used fo our interaction, and pg is postgres package installlation).
+Create drizzle named folder, create a drizzle.config.js file in the root directory and then Install - Package.json(npm init), npm i drizzle-orm pg(drizzle-orm is used for our interaction, and pg is postgres package installation).
+
+
 
 Step 2 - Setup connection variables
 
 Create a .env file in the root of your project and add your database connection variable:
 -----------------------------------------
 Now we want to setup dotenv variables, which will be explained later.
+
+
 
 Step 3 - Connect Drizzle ORM to the database
 
@@ -279,9 +283,10 @@ const db = drizzle("postgres://postgres:admin@localhost:5432/myDb");
 module.exports = db;
 
 
+
 Step 4 - Create a table
 
-Create a schema.ts file in the src/db directory and declare your table:
+Create a schema.js file in the src/db directory and declare your table:
 -------
 Now, we have to create a table. That is, we have to define a schema as we are working on structured schema or db. 
 
