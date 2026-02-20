@@ -1,0 +1,75 @@
+Video - 51
+------------
+Migrating Book Store to Drizzle ORM - Part 1: Schema Setup
+
+
+Firstly, we need to create a docker-compose.yml file. 
+Talking about ports in .yml file, we can set it as 5431 but the defaut must be -542:5432. So., it's better to delete the old containers running on that port in docker(previous video is running on this port so delete it).
+
+Chatgpt Content:
+-----------------
+image in docker-compose.yml file:
+
+instead of installing:
+PostgreSQL,
+Dependencies,
+OS libraries,
+Configuration,
+Docker just pulls the image which already contains everything.
+
+
+
+Why do we need Drizzle-kit?
+
+Why do we need drizzle-kit?
+
+Remember — in Drizzle you define tables in code like:
+
+pgTable("users", {...})
+
+But writing schema in code alone does NOT create tables in the database.
+
+👉 You still need to update the actual database.
+
+That’s where drizzle-kit comes in.
+
+What drizzle-kit does in simple words
+
+👉 It converts your schema code → SQL migration files
+👉 Then applies those migrations to your database
+
+So, users creates a schema, then it calls dizzle-generate, and then drizzle-migration, and then npx drizzle-kit push.
+
+
+Course Content:
+Then, we installed npm i dotenv, npm i drizzle-orm pg, and npm i drizzle-kit.
+Now , all the packages are installed. 
+
+
+Setup everything that is files. Schema.js is created inside models folder, and is renamed as book.model.js.
+
+// These kind of Foreign-Table relationships are not possible in MongoDB
+
+We use 'references with an arrow function" to link one table model to another table model.
+
+ authorId: uuid().references(() => authorsTable.id).notNull()
+
+
+ In drizzle.config.js file, we have to mention the schema. But our schema is fragmented into two files i.e., authorMode.js and bookModel.js. So, here are two ways:
+ 1. we can just mention the main directory of the files i.e., models. -> not tried, so not sure which was told in the course.
+ 2. We can create an index.js file inside the models folder, and we can import both the authorMode.js and bookModel.js, and use that as file for schema.
+
+
+ After all these steps, now we must initiate the docker that is, turn on the database by typing "docker compose up -d". Then we have to push the tables in the public schema so we need to type "npx drizzle-kit push".  After this has been created, we must type "npx drizzle-kit studio". Now you will get a link that is https://local.drizzle.studio
+
+
+ Then you wll see the tables in the link. You can also add data in the drizzle link by selectinng the table or model, and then clicking "Add Record" button.  
+
+
+ Video - 52
+ -----------
+
+
+
+
+

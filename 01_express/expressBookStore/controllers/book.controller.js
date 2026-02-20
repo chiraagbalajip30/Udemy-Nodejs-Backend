@@ -1,4 +1,5 @@
-const { BOOKS } = require("../models/book");
+const booksTable = require("../models/book.model");
+const db = require("../db/index");
 
 exports.getAllBooks = function (req, res) {
   // res.setHeader('x-bd', 'mcb'); // manually fixing the header
