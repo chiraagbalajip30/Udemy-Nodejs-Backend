@@ -68,7 +68,149 @@ We use 'references with an arrow function" to link one table model to another ta
 
  Video - 52
  -----------
+Migrating Book Store to Drizzle ORM - Part 2
 
+
+I have created a copy of book.controller.js as bookCopy.controller.js, and have kept the old code untouched. It helps in comparision between old and new code.
+
+
+ if (isNaN(id)) {
+    return res.status(400).json({ error: `Id must be of type number` });
+  }
+  This condition will be removed in the new code because uuid will be used as id is not a string. 
+
+  Instead of writing Book((e) => books.id === e.id,  ere we write or use eqyal that is eq which must be imported from drizzle-orm.)
+
+
+  We need to use const [book]  as book inside an array which is called as array destructing because the db returns an array, and we only need one/first part of it that is id(first part).
+
+
+  So when should we use [variable]?
+
+👉 When you expect ONE result from an array
+
+Common cases:
+
+✅ limit(1) queries
+✅ find first record
+✅ unique ID search
+✅ login user lookup
+✅ checking existence
+
+
+
+When NOT to use [ ]
+
+When you expect multiple rows:
+
+const books = await db.select().from(booksTable);
+
+Because you want full list.
+
+Why ORMs always return arrays
+
+Because SQL SELECT can return multiple rows — ORM keeps return type consistent.
+
+
+
+
+
+In createBook, we donot need to return author as in old code. We need to return the authorId. 
+
+ if (!author || author === "") {
+    return res.status(400).json({ error: `Author is required` });
+  }
+
+  const id = BOOKS.length + 1;
+
+  const book = { id, title, author };
+  BOOKS.push(book);
+
+  So wew ill be removing the above code, and typing a new code for inserting into the db whch can be viewed in the code. 
+
+
+  In createBooks, we need to return id because:
+  ✅ 4 — Best practice in REST APIs
+
+Standard pattern:
+
+POST → return created resource or id
+
+
+🏆 Real industry rule of thumb
+
+👉 POST APIs usually return created id or object
+
+So .returning() is very common.
+
+🔥 Simple analogy
+
+Imagine submitting a form at office.
+
+Without returning → you drop form and leave
+
+With returning → you get receipt number
+
+That receipt number = id
+
+
+
+const [result] = await db.insert(booksTable).values({title, description, authorId}).returning({id: booksTable.id,});
+
+
+📊 Mental model
+
+Database always returns:
+
+👉 Table (rows) → Array
+
+We pick first row → [row]
+
+🏆 One-line takeaway
+
+✅ Yes — we are grabbing the first element from the array returned by the insert query
+
+
+
+Syntax of delete and getbyid are differenet. So i asked is it differenet?
+
+Great question 👍 — you’re comparing two different query styles and wondering if they’re interchangeable.
+
+Short answer:
+
+👉 They are NOT interchangeable
+👉 They are used for DIFFERENT operations
+👉 Syntax difference is because of how Drizzle API works
+
+
+
+
+| Operation | Syntax             | Why                    |
+| --------- | ------------------ | ---------------------- |
+| SELECT    | `.select().from()` | Need to specify source |
+| DELETE    | `.delete(table)`   | Table already provided |
+| INSERT    | `.insert(table)`   | Table already provided |
+| UPDATE    | `.update(table)`   | Table already provided |
+
+
+
+⭐ Industry style recommendation
+
+Most developers prefer:
+
+.where(eq(booksTable.id, id))
+
+
+
+
+Video - 53
+-------------
+Testing your REST APIs in POSTMAN
+
+
+
+We must create a collection named Book STore as we can store all the routes within it.
+Then instaed of typing http://localhost:800 for the routes every time, we can create an environment, and there we can assign any name we want which we have assigned as BASE_URl here, and we can assign the link next to it, and we can set the environment as the created env name, and then use BAE_URL along with the links. 
 
 
 

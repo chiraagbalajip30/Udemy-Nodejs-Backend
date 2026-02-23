@@ -32,6 +32,7 @@
 
 
 const express = require("express");
+require("dotenv/config");
 
 const bookRouter = require("./routes/book.routes");
 const { loggerMiddleware } = require("./middlewares/logger");
