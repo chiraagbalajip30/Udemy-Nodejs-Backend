@@ -411,6 +411,7 @@ exports.getBookById = async function (req, res) {
     .where((table) => eq(table.id, id))
     .leftJoin(authorsTable, eq(booksTable.authorId, authorsTable.authorId))
     .limit(1);
+}
 
 Now, you can see, you will get the authors details attached to tha particular author id's book.
 THis is a foreign relationship. 
@@ -418,4 +419,39 @@ THis is a foreign relationship.
 
 ----------------------------------------------
 
+Video - 56
+-----------
+Understanding Authorization vs Authentication with Real-World Examples
+
+
+
+Authentication:
+
+It means "who are you?".
+
+
+Authorization:
+
+It is the next step of Authentication. 
+
+The main challenge lies in Authentication. If this is surpassed, then Authorization becomes easyas it is just a check. 
+
+----------------------------------------------
+
+
+Video - 57
+-----------
+What is Authentication? A Story-Based Introduction to Login Systems.
+
+
+We will understand Authentication with a story.
+
+We will take a parking lot. Let us say it is a paid and reserved service taken by some xyz company for their own purpose.
+They have a security guard. No one have access to park the car there(random people). 
+Now let us say, it is a vallet parking. Now, the owner comes and parks the car. Before parking, the security guard comes and takes the car, and he parks the car in the empty space. Then he gives a token by mentioning your car name so that you can show this card to take back your car when you want to. 
+Security guard has a diary,and he stores the car number belomgs to so and so token number. 
+Once the owner comes bacjk. he will give the token number, security guard opens the diary and checks if the token number matches the car number, and he then parks the car outside and handovers the key to the owner. 
+The main thing is that token is being issued here. 
+There also migh eb a probelm. Let  us say, there will be 200 cars. If there is one security guard, he will be tired, and must look at the cars one by one, and the 200 people have to wait in the long queue. 
+So, what i can do is increase the resource that is, security guards. So i will make three lines, and divide the traffic into three lines parallely. Now, the speed is faster as well. 
 
