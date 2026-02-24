@@ -1,6 +1,5 @@
 // Code Before using Drizzle ORm
 
-
 // const express = require("express");
 
 // const bookRouter = require("./routes/book.routes");
@@ -25,32 +24,25 @@
 //   console.log(`Your server is running on port: ${PORT}`);
 // });
 
-
-
-
 // Code after using Drizzle-ORm
-
 
 const express = require("express");
 require("dotenv/config");
 
 const bookRouter = require("./routes/book.routes");
+const authorRoute = require("./routes/author.routes");
+
 const { loggerMiddleware } = require("./middlewares/logger");
 
 const app = express();
 const PORT = 8000;
 
-
-
 app.use(express.json());
 
 app.use(loggerMiddleware);
-
-
 app.use("/books", bookRouter);
-
+app.use("/authors", authorRoute);
 
 app.listen(PORT, () => {
   console.log(`Your server is running on port: ${PORT}`);
 });
-

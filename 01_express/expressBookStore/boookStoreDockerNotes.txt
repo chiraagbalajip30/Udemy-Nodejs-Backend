@@ -384,6 +384,38 @@ Video - 55
 Adding Foreign Key Relationships: Authors and Books
 
 
+In this video, let us add the Author Routes as well.
 
+
+Create an filer for Author Routes and controllers file for authors as well. 
+
+I have created routes for all, and the logic in controlers. But the delete logic is not easy beacuse if i delete the author, then I have to delete all the books related o that author as well. 
+
+Now, we need to register this particular rute. We can register it by importing it in main index.js file. 
+We have done the same for book routes as well in index.js.
+This is the first step.
+
+We will come back to delete after a while.
+
+We can also create a route to get all the books of an author. We msut do it in author.controller.js .
+I have created the routes which can be checked in the code. /authors/:id/books - now if type this link, i will get the books related to the author.
+
+
+Similarly, when i search book by id, i need to get the author details of that book not only the author id. So, go to book.controller.js, import the authorsTable model, and add join in getBookById function. 
+
+exports.getBookById = async function (req, res) {
+  const id = req.params.id;
+  const [book] = await db
+    .select()
+    .from(booksTable)
+    .where((table) => eq(table.id, id))
+    .leftJoin(authorsTable, eq(booksTable.authorId, authorsTable.authorId))
+    .limit(1);
+
+Now, you can see, you will get the authors details attached to tha particular author id's book.
+THis is a foreign relationship. 
+
+
+----------------------------------------------
 
 
