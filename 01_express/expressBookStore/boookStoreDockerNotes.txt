@@ -215,3 +215,175 @@ Then instaed of typing http://localhost:800 for the routes every time, we can cr
 
 
 
+Video - 54
+-----------
+Using Indexes in PostgresSQL to speed up queries
+
+
+Now we have to add a route for search, where we can search for books. So, we need a search functionality.
+
+So instead of im,plementing search functionality, we can do something. In get all books, {{BASE_URL}/books?search=node}  -  we can add or do something like this is query parameter where we need tro search a node books in the title of the books(just a example name of the book named book). When we search in get all books route, the result must appear. 
+
+
+so if i add this search in getAllBooks routes function,
+exports.getAllBooks = async function (req, res) {
+  const search = req.query.search;
+  console.log({ search });
+  const books = await db.select().from(booksTable);
+  return res.json(books);
+};
+
+and, add {{BASE_URL}}/books?search=node as route, then we will get the console.log output as:
+{ search: 'node' }.  
+Now, if i remove ?search=node in url, then i will get {search: 'undefined' }. Now, we got to klnow that we have to add some logic to search here, and it works. 
+
+
+Now we need to add a condition for search and would do the same await function, but we need to import "ilike" from drizzle-orm. 
+
+ILike - we can basically give a regex kind of an expression, and I means ignore case. 
+
+
+exports.getAllBooks = async function (req, res) {
+  const search = req.query.search;
+
+  if (search) {
+    await db.select().from(booksTable).where(ilike(booksTable.title, `%${search}%`))
+  }
+
+  console.log({ search });
+  const books = await db.select().from(booksTable);
+  return res.json(books);
+};
+
+  this is the condition where i in ilike means, ignore small or capital letter of the value which we are searching, and the capital opr amll letters hold the same value meaning. Example, N and n are considered same. So, 'i' means, Ignore Case.
+
+  `%${search}%`  -  anything can be in front of it or back of it, it will search the search value.
+  
+   
+
+Even, we can write like this which is a professional way used by developers(given by chatgpt):
+
+exports.getAllBooks = async (req, res) => {
+  const { search } = req.query;
+
+  const books = search
+    ? await db.select().from(booksTable).where(ilike(booksTable.title, `%${search}%`))
+    : await db.select().from(booksTable);
+
+  return res.json(books);
+};
+
+
+
+The below code is used in the course:
+
+
+exports.getAllBooks = async function (req, res) {
+  const search = req.query.search;
+
+  if (search) {
+    const books = await db
+      .select()
+      .from(booksTable)
+      .where(ilike(booksTable.title, `%${search}%`));
+
+    return res.json(books);
+  }
+
+  console.log({ search });
+  const books = await db.select().from(booksTable);
+  return res.json(books);
+};
+
+
+But these are time consuming when there are millions of data in the database. Here comes the Indexes to resolve this. We can actually put up a search index on it. 
+Now go back to booksTable, and add an extra function at the end where we write an arrow function on the table, and we have to put a search index on the book title. Also. donot forget to import the index at the top. 
+
+After channging this, we need to push th changes to the schema. So, we need to do npx drizzle-kit push. 
+
+const booksTable = pgTable(
+  "books",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    title: varchar({ length: 100 }).notNull(),
+    description: text().notNull(),
+    authorId: uuid()
+      .references(() => authorsTable.id)
+      .notNull(),
+  },
+  (table) => ({
+    searchIndexOnTitle: index("title_index").using(
+      "gin",
+      sql`to_tsvector('english', ${table.title})`,
+    ),
+  }),
+);
+
+this is what we changed in booksTable. The syntax for index search was found in official drizzle-orm search index docs. 
+https://orm.drizzle.team/docs/guides/postgresql-full-text-search
+I have pasted the link above. 
+Also, tjhere was sql import missing in the docs. So i have done that manually.
+
+After doing these, we have to push our schema to the db. Now, we have to do npx drizzle-kit push. 
+
+
+Now in book.controllers module, instead of using ilike and having a slower performance:
+
+exports.getAllBooks = async function (req, res) {
+  const search = req.query.search;
+
+  if (search) {
+    const books = await db
+      .select()
+      .from(booksTable)
+      .where(ilike(booksTable.title, `%${search}%`));
+
+    return res.json(books);
+  }
+
+  console.log({ search });
+  const books = await db.select().from(booksTable);
+  return res.json(books);
+};
+
+
+
+we will use the syntax given in the docs like:
+
+exports.getAllBooks = async function (req, res) {
+  const search = req.query.search;
+
+  if (search) {
+    const books = await db
+      .select()
+      .from(booksTable)
+      .where(
+        sql`to_tsvector('english', ${booksTable.title}) @@ to_tsquery('english', ${search})`,
+      );
+
+    return res.json(books);
+  }
+
+  console.log({ search });
+  const books = await db.select().from(booksTable);
+  return res.json(books);
+};
+
+
+
+After doing this, if you search for something like:   {{BASE_URL}}/books?search=Chiraag   in the postman, you will see that the search time has been decreased. 
+
+These kind of indexing are important when you do sorting, or filtering.
+
+
+
+----------------------------------------
+
+Video - 55
+-----------
+Adding Foreign Key Relationships: Authors and Books
+
+
+
+
+
