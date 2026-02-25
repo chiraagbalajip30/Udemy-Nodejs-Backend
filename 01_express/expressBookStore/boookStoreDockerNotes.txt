@@ -450,8 +450,133 @@ We will take a parking lot. Let us say it is a paid and reserved service taken b
 They have a security guard. No one have access to park the car there(random people). 
 Now let us say, it is a vallet parking. Now, the owner comes and parks the car. Before parking, the security guard comes and takes the car, and he parks the car in the empty space. Then he gives a token by mentioning your car name so that you can show this card to take back your car when you want to. 
 Security guard has a diary,and he stores the car number belomgs to so and so token number. 
-Once the owner comes bacjk. he will give the token number, security guard opens the diary and checks if the token number matches the car number, and he then parks the car outside and handovers the key to the owner. 
+Once the owner comes back, he will give the token number, security guard opens the diary and checks if the token number matches the car number, and he then parks the car outside and handovers the key to the owner. 
 The main thing is that token is being issued here. 
-There also migh eb a probelm. Let  us say, there will be 200 cars. If there is one security guard, he will be tired, and must look at the cars one by one, and the 200 people have to wait in the long queue. 
+There also might be a probelm. Let  us say, there will be 200 cars. If there is one security guard, he will be tired, and must look at the cars one by one, and the 200 people have to wait in the long queue. 
 So, what i can do is increase the resource that is, security guards. So i will make three lines, and divide the traffic into three lines parallely. Now, the speed is faster as well. 
+There is a problem as well in this approach. There is only one diary. When one security guard is writing down in that diary, the others in the queue have to wait. 
+So, now we will increase the numbewr of diaries. Now we think everything is good. 
+But there is a problem. If a car goes to one security guard and gets his vehickle number entered in one diary, and when he comes back if he goes to the another security guard, he won't be having that token in his diary. 
+Next idea is one security guard with multiple diaries. Pro is the above problem is solved that is, customers must come to the same security guard, and no need of remembering to whom they gave the cvar. COns is one security guard casnnot hasndle the queue, while other security guards will be idling sitting with no queue. 
+SO, three approaches are done. Both have their own pros and cons.
+
+
+The same happens in the authentication of server sas well. 
+First we will try, One server, One state(tokens). So we will end up in case-1 problem. The same for other cases.
+This was just an example. 
+In the next video, we will try all the cases, and then come too the final correct option which will be shown in the next video.
+
+Chatgpt:
+---------
+load balancer is a system that distributes incoming traffic across multiple servers so no single server gets overwhelmed.
+
+🔄 What It Does
+
+When users visit your website:
+
+The request first goes to the load balancer
+
+The load balancer chooses a server
+
+It forwards the request to that server
+
+The server responds to the user
+
+
+
+🎯 Why It’s Important
+✅ Prevents Overload
+
+Spreads traffic evenly so no single server crashes.
+
+✅ High Availability
+
+If one server fails, traffic is automatically sent to healthy servers.
+
+✅ Improves Performance
+
+Users experience faster response times.
+
+✅ Enables Horizontal Scaling
+
+Essential when running multiple servers.
+
+
+
+🧠 How It Decides Where to Send Traffic
+
+Common algorithms:
+
+Round Robin → Takes turns between servers
+
+Least Connections → Sends traffic to the least busy server
+
+IP Hash → Same user goes to the same server
+
+Weighted Distribution → More powerful servers get more traffic
+
+
+
+🏗 Types of Load Balancers
+1️⃣ Hardware Load Balancers
+
+Physical devices in data centers.
+
+2️⃣ Software Load Balancers
+
+Run as applications or services.
+
+Examples:
+
+NGINX
+
+HAProxy
+
+Apache HTTP Server
+
+3️⃣ Cloud Load Balancers
+
+Managed services from cloud providers:
+
+Amazon Web Services Elastic Load Balancer
+
+Google Cloud Load Balancing
+
+Microsoft Azure Load Balancer
+
+
+
+🏢 Simple Real-World Analogy
+
+Imagine a restaurant host:
+
+Customers walk in
+
+The host assigns them to available tables
+
+If one waiter is busy, customers go to another
+
+The host = load balancer
+The waiters = servers
+
+
+
+-----------------------------------------------
+
+
+Video - 58
+-----------
+Implementing Session-Based Authentication in Node.js Applications
+
+
+
+
+
+
+
+
+
+
+
+
 
