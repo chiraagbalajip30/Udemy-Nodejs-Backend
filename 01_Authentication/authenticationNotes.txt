@@ -156,6 +156,147 @@ So, I will write down the cases, and we will follow step by step and improve ste
 4. How can we make it fully optimise for real-world purpose.
 
 
+So, I had written this above notes or content in bookStoreDockerNotes.txt file. Now, I have created a folder named 01_Authentication, and created a text file named authenticationNotes.txt, and am writing everything inside this.
+
+
+
+npm i @types/node installs TypeScript type definitions for Node.js.
+
+Let’s break it down 👇
+
+🧠 What it actually does
+
+When you write code in TypeScript, it needs to know the types of built-in Node objects like:
+
+process
+
+fs
+
+path
+
+http
+
+__dirname
+
+Buffer
+
+require
+
+TypeScript does NOT know these by default.
+
+👉 @types/node provides type definitions so TypeScript understands Node APIs.
+
+
+
+
+npm i @types/node installs TypeScript type definitions for Node.js.
+
+Let’s break it down 👇
+
+🧠 What it actually does
+
+When you write code in TypeScript, it needs to know the types of built-in Node objects like:
+
+process
+
+fs
+
+path
+
+http
+
+__dirname
+
+Buffer
+
+require
+
+TypeScript does NOT know these by default.
+
+👉 @types/node provides type definitions so TypeScript understands Node APIs.
+
+
+
+Course Content:
+-------------------
+
+As this is a new foler, we need to do some installations.
+1. npm init - Got our package.json file.
+2. npm i express@4.x - express version 4 is suitable and good with no bugs.
+3. npm i @types/node @types/express@4.x -D  -  types/node for typings, and -D for storing these in dev dependencies. 
+
+
+Now, we will create an index.js file. 
+
+Inside this file, let us export express, assign a port and we will listen to the port.
+
+Now let us create some routes. As a part of Authentication, we need a login route. Also, we will create a sign up route.  Then we will create a me route which recognises us on the server. 
+
+We will create a signup route. This means, "hey here is my car, Please park it and give me back a token". 
+
+Now we destructure or extract few details from the frontend that si the req.body which are email, anme and password. 
+Email - unique car Number.
+
+Now we will also use Middleware that is app.use(express.json());.
+
+🧠 What app.use(express.json()) actually does
+
+👉 It is middleware that parses incoming request bodies
+👉 Specifically, it parses JSON data sent by the client
+
+It converts:
+
+✅ Raw JSON string (from HTTP request body)
+➡️ Into
+✅ JavaScript object (req.body)
+
+It takes care of only request part, and the response part will be converted back to json usiong "res,json()" method.
+
+
+
+Now we will create a Diary. 
+
+In the route, we will check if eail which has been entered is already taken. If yes it sends 400. Else, we have to create a toke. Usually tokens will be in the form of ids. But for now, we will create some random date thing. 
+
+ DIARY[token] = { name, email, password }; - This means, hey in this diary, in this partiular token, create or sya this is your name, email and password. 
+
+ me route means i will tell you who are ytou to take back your car. 
+
+
+ http://localhost:8000/signup/
+
+ Response when i click send or post for the first time:
+
+ {
+  "status": "success",
+  "token": "1772012565790"
+}
+
+
+WHen i try to store the same email again that is, when i click end again:
+
+{
+  "error": "Email already taken"
+}
+
+
+When you sewnd or post the request for ther link  http://localhost:8000/me
+
+{
+  "data": {
+    "name": "MCB1",
+    "email": "mcb1@gmail.com",
+    "password": "1234567"
+  }
+}
+
+
+
+Now let's say we awantvto access some private data. Wew will create a route for that.
+What trhis route tells is
+
+
+
 
 
 
