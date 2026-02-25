@@ -569,14 +569,15 @@ Video - 58
 Implementing Session-Based Authentication in Node.js Applications
 
 
+So, I will write down the cases, and we will follow step by step and improve step by step.
+
+1. 1 Security Guard = 1 Diary (Tokens)
+2. 4 Security Guards = 1 Diary (Tokens)
+3. 4 Security Guards = 4 Diary (TOkens)
+4. How can we make it fully optimise for real-world purpose.
 
 
-
-
-
-
-
-
+Further notes will be written in 01_Authentication/authenticationNotes file.
 
 
 
