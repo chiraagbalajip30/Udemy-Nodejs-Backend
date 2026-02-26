@@ -388,6 +388,10 @@ This is best for Short-Lived sessions. Example: Banking Website, where yopu are 
 It is called Stateful because the session is maintained by the server. 
 But it is bad for Long-Lived Sessions. 
 
+Session-based authentication means:
+The server stores login information,
+and the client stores only a session ID.
+
 
 ------------------------------
 Another Final Approach IG WHich is required
@@ -397,10 +401,80 @@ For Long-Lived Sessions, we can use something known as "JSON Web Tokens". These 
 In the next Video, we are going to code the "End to End Code Session Based Stateful Authentication Systems" first, and then talk about "JSON Web Tokens".
 
 
+💾 So Where Is Memory Used?
+
+With JWT:
+
+No session memory is needed.
+
+No Redis required.
+
+No shared session store.
+
+Each request:
+
+Verify token
+
+Read userId
+
+Query DB
+
+-----
+
+The token is NOT the secret.
+
+The token is just:
+
+{
+  "userId": 123
+}
+
+Signed with secret.
+
+Think of it like:
+
+Server stamps a document with a private stamp.
+
+Client carries the stamped document.
+
+Client does NOT have the stamp.
+
+
+
+Session:
+Client → sessionId → Server memory → user
+JWT:
+Client → token(with userId) → Server verifies → DB lookup
+
+
+
+SO, token has 3 parts: header, signature and payload. Payload is te datat that is userId: "1
+, userId: "2
+, etc.
+
+
+🧠 Final Clear Model
+
+There is:
+
+ONE secret (per app)
+
+MANY tokens (per login/session)
+
+ZERO server memory (for JWT system)
+
 -------------------------------------------
 
 Video - 58
 ---------------
+Adding Session-Based Authentication using Drizzle-ORM
+
+
+
+This section will be continued in Authentiaction-Session folder. 
+
+
+
 
 
 
