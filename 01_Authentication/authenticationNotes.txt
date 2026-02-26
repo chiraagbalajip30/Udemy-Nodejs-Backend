@@ -228,6 +228,10 @@ As this is a new foler, we need to do some installations.
 
 Now, we will create an index.js file. 
 
+----------
+"First Approach Example" - 1 Security Guard = 1 Diary (Tokens). 
+----------------------
+
 Inside this file, let us export express, assign a port and we will listen to the port.
 
 Now let us create some routes. As a part of Authentication, we need a login route. Also, we will create a sign up route.  Then we will create a me route which recognises us on the server. 
@@ -280,7 +284,7 @@ WHen i try to store the same email again that is, when i click end again:
 }
 
 
-When you sewnd or post the request for ther link  http://localhost:8000/me
+When you sewnd or post the request for the link  http://localhost:8000/me  by entering the token of the created signup user, you get:
 
 {
   "data": {
@@ -292,10 +296,111 @@ When you sewnd or post the request for ther link  http://localhost:8000/me
 
 
 
-Now let's say we awantvto access some private data. Wew will create a route for that.
-What trhis route tells is
+Now let's say we want to access some private data. We will create a route for that.
+What trhis route tells is that the info must be available only to the person that has logged in. 
 
 
+
+const express = require("express");
+
+const app = express();
+
+const PORT = 8000;
+
+app.use(express.json());
+
+const DIARY = {};
+const EMAILS = new Set();
+
+// Hey, Here is my car - Please park it and give me back a token
+// Email => Unique Car Number
+
+app.post("/signup", (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (EMAILS.has(email)) {
+    return res.status(400).json({ error: "Email already taken" });
+  }
+  // Create a Token for User
+  const token = `${Date.now()}`;
+
+  // Do a entry in Diary
+  DIARY[token] = { name, email, password };
+  EMAILS.add(email);
+
+  // user must come back with this tokeneverytime
+  return res.json({ status: "success", token });
+});
+
+app.post("/me", (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "Missing Token" });
+  }
+
+  if (!(token in DIARY)) {
+    return res.status(400).json({ error: "Invalid Token" });
+  }
+
+  const entry = DIARY[token];
+
+  return res.json({ data: entry });
+});
+
+app.post("/private-data", (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: "Missing Token" });
+  }
+
+  if (!(token in DIARY)) {
+    return res.status(400).json({ error: "Invalid Token" });
+  }
+
+  const entry = DIARY[token];
+  return res.json({ data: { privateData: "Access Granted" } });
+});
+
+app.listen(PORT, () => console.log(`Server started on Port ${PORT}`));
+
+
+
+This si the first case and is not used in the realworkd because only one server has to be for maintaining tokens as it has both states and diary(db and data). If there are multiple servers, if one server has the diary and state, and if the token is sent to another server, it wouldn't know whta to do with the request.
+So, it is notscalabale. 
+This was the "First Approach Example" - 1 Security Guard = 1 Diary (Tokens). 
+
+
+------------------
+"2nd Approach Example Below" - 4 Security Guard = 1 Diary(Tokens).
+-------------------
+
+For this we will create a db where diary will be moved in here. 
+
+
+
+-------------------
+"3rd Approach Example" - 4 Security Gaurds = 4 Diaries(Tokens).
+----------------
+
+Session-Based Authentication is the term that can be coined for these all. Here token acts as a temporary data or token stored until the session, and it can be removed whenever required(suppose if the person logged in is a scammer, we can just remove that particular login token, so he cannot login again). Server is Stateful here(diary). 
+This is best for Short-Lived sessions. Example: Banking Website, where yopu are allowed to login for few minutes(4-5 mins).
+It is called Stateful because the session is maintained by the server. 
+But it is bad for Long-Lived Sessions. 
+
+
+------------------------------
+Another Final Approach IG WHich is required
+-----------------------
+
+For Long-Lived Sessions, we can use something known as "JSON Web Tokens". These are "Stateless Authentication". 
+In the next Video, we are going to code the "End to End Code Session Based Stateful Authentication Systems" first, and then talk about "JSON Web Tokens".
+
+
+-------------------------------------------
+
+Video - 58
+---------------
 
 
 

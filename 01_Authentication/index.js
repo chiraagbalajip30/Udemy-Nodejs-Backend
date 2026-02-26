@@ -44,6 +44,19 @@ app.post("/me", (req, res) => {
   return res.json({ data: entry });
 });
 
-app.post("/private-data", )
+app.post("/private-data", (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: "Missing Token" });
+  }
+
+  if (!(token in DIARY)) {
+    return res.status(400).json({ error: "Invalid Token" });
+  }
+
+  const entry = DIARY[token];
+  return res.json({ data: { privateData: "Access Granted" } });
+});
 
 app.listen(PORT, () => console.log(`Server started on Port ${PORT}`));
