@@ -265,7 +265,49 @@ exports.signUp = async (req, res) => {
 };
 
 Now, we created this route for signup. 
-Next step is to register it i index.js file. 
+Next step is to register it in index.js file. 
+
+
+
+
+Next step is /login.js route.
+For this route, the logic is, the user will enter the email and the "plain" password. So, if we first check if the email exists, and then take the password and use the aslt and then hash it, and later compare the newly created hash with the old has or existing hashedPassword and if it matches, thn the password is correct. 
+
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  // donot generate session as password doesn't macth
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // Generate a session for user if password matches
+  return res.json({ status: "success" });
+};
+
+
+Now, we need to create a session in ther db. 
 
 
 
