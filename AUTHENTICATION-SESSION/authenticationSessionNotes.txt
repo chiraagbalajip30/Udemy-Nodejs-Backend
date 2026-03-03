@@ -143,6 +143,10 @@ Volume = Hard Drive
 Then, type in terminal:  docker compose up -d 
 Then to check if the docker is active, type:  docker ps
 
+Chatgpt Content:
+DATABASE_URL=postgres://postgres:password@db:5432/postgres
+We must use this in real-app production, and remove ports in .yml file. This internally connects to the port mentioned in the env as given above, and prevents the access of ports to the hackers.
+
 Step-2 Used now
 ----------------
 DATABASE_URL=postgres://postgres:myPassword@localhost:5432/postgres
@@ -153,7 +157,7 @@ container type-postgressql:;;username:password@localhost:portNumber/dbName
 
 Step - 7
 ---------
-now we must type in the terminal:  npx drizzle-kit push, and then:  npx deizzle-kit studio.
+now we must type in the terminal:  npx drizzle-kit push, and then:  npx drizzle-kit studio.
 
 We can also declare the in package.json scripts, and call the shorte forms in the terminal. 
 
@@ -161,6 +165,109 @@ We can also declare the in package.json scripts, and call the shorte forms in th
 "db:studio": "drizzle-kit studio"
 
 From the next time after declaring this, we just need to write pnpm db:push instead of npx drizzle-kit pus, and pnpm db:studio, instead of npx drizzle-kit studio. 
+
+
+----
+Now, the setup has been completed.
+Lte==et's now start by creating the routes. 
+I created a folder for routes named "routes". 
+
+
+while doing this, we should not display or create the password directly to db. await db.insert(usersTable).values({
+    name,
+    email,
+    password,
+  })
+
+  This is wrong. We must use salt, and generate random password.
+  So, you can search fro node crypto randombytes in google. 
+
+  https://nodejs.org/api/crypto.html#cryptorandombytessize-callback
+
+  const {
+  randomBytes,
+} = require('node:crypto');
+
+  const salt = randomBytes(256).toString('hex');
+
+
+Now we must hash the password. 
+
+search for cupcake in the same docs, you will get the hashpassword example.
+
+The import createHmac, and use it.
+
+
+Chatgpt:
+----------
+In detail:
+randomBytes(256): Creates a Buffer object with 256 bytes of cryptographically secure random data. This randomness comes from the operating system's entropy pool (e.g., /dev/urandom on Linux), making it suitable for security purposes like salting. Using predictable randomness (e.g., Math.random()) would weaken security.
+.toString("hex"): Converts the binary buffer to a readable hex string for easy storage in the DB. For example, it might produce something like "a1b2c3... (512 chars total)".
+Why 256 bytes?: This is overkill but very secure—larger salts increase uniqueness and resistance to attacks. Common practice is 16-32 bytes, but more doesn't hurt.
+
+Role in the function: The salt is generated fresh for each new user, ensuring no two users share the same salt (even if passwords match).
+
+
+
+const db = require("../db/index");
+const usersTable = require("../db/schema");
+const { eq } = require("drizzle-orm");
+const { randomBytes, createHmac } = require("node:crypto");
+
+exports.signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const existingUser = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where(eq(usersTable.email, email))
+      .limit(1);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({
+        status: "error",
+        error: `Email ${email} already taken`,
+      });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [newUser] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({
+      status: "success",
+      message: "User created successfully",
+      userId: newUser.id, // ← this is the auto-generated UUID
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+Now, we created this route for signup. 
+Next step is to register it i index.js file. 
+
+
 
 
 
