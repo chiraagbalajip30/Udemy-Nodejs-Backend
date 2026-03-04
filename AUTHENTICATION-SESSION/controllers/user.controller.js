@@ -85,10 +85,32 @@ export const logIn = async (req, res) => {
   return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
 };
 
-export const currentPage = async (req, res) => {};
+export const currentPage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  return res.json({ user });
+};
+
+export const updatePage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  const { name } = req.body;
+  await db.update(usersTable).set({ name }).where(eq(usersTable.id, user.id));
+
+  return res.json({ status: "success" });
+};
 
 export default {
   signUp,
   logIn,
   currentPage,
+  updatePage,
 };

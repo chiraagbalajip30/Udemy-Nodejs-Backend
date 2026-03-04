@@ -311,6 +311,444 @@ Now, we need to create a session in ther db.
 
 
 
+import { error } from "node:console";
+import db from "../db/index.js";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+
+export const signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const [existingUser] = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where((table) => eq(table.email, email));
+
+    if (existingUser) {
+      return res.status(400).json({ error: `Email ${email} already taken` });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [user] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({ status: "success", userId: user.id }); // ← this is the auto-generated UUID
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // Generate a session for user
+  const [session] = await db
+    .insert(userSessions)
+    .values({
+      userId: existingUser.id,
+    })
+    .returning({ id: userSessions.id });
+  return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
+};
+
+export const currentPage = async (req, res) => {};
+
+export default {
+  signUp,
+  logIn,
+  currentPage,
+};
+
+
+
+
+------------------------------------------------
+
+Video - 60
+-----------
+Building Secure AUth Workflows using Express.js Middleware Functions
+
+
+
+In this video, we are going to check or learn who is the user currently logged in. 
+
+We already studied about middlewares. 
+Now if we say that user must always send the session id through header in the request, then we can build the logic. 
+
+We are going to get sessionId in req.headers as akey that is session-id.
+const sessionId = req.headers["session-id"];
+
+
+Then we will check or search if there is sessionId. If not sessionId, then return 401.
+Else, the condiitons.
+
+Firstvwe check if the data is invalid or valid.
+
+// If the sessionId is invalid
+if (!data) {
+  return res.status(401).json({ error: "You are Not Logged In" });
+}
+
+If the sessionId is Valid, then we have to get the user Information. For that, we have userId in userSessions table. We can do a for lookup that is, rightjoin on userstable where users table.id is equal to usersessions.userId. 
+
+
+import { error } from "node:console";
+import db from "../db/index.js";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+
+export const signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const [existingUser] = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where((table) => eq(table.email, email));
+
+    if (existingUser) {
+      return res.status(400).json({ error: `Email ${email} already taken` });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [user] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({ status: "success", userId: user.id }); // ← this is the auto-generated UUID
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // Generate a session for user
+  const [session] = await db
+    .insert(userSessions)
+    .values({
+      userId: existingUser.id,
+    })
+    .returning({ id: userSessions.id });
+  return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
+};
+
+export const currentPage = async (req, res) => {
+  const sessionId = req.headers["session-id"];
+
+  if (!sessionId) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  const [data] = await db
+    .select({
+      id: userSessions.id,
+      userId: userSessions.userId,
+      name: usersTable.name,
+      email: usersTable.email,
+    })
+    .from(userSessions)
+    .rightJoin(usersTable, eq(usersTable.id, userSessions.userId))
+    .where((table) => eq(table.id, sessionId));
+
+  // If the sessionId is invalid
+  if (!data) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  return res.json({ data });
+};
+
+export default {
+  signUp,
+  logIn,
+  currentPage,
+};
+
+
+
+Now we will add Patch or Update Route.
+
+Here to check who is the user logged in, we have to repeate the same data code above. We might need this for many routes. So, it is better if we create a middleware in index.js, and then add it to the required routes. This middleware holds the session data, and forwards it to the required routes. So, do all the imports into the index.js file. 
+
+
+index.js
+---------
+
+import express from "express";
+import userRouter from "./routes/user.routes.js";
+import db from "./db/index.js";
+import { usersTable, userSessions } from "./db/schema.js";
+import { eq } from "drizzle-orm";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json()); // as we are handling raw data
+
+app.use(async function (req, res, next) {
+  const sessionId = req.headers["session-id"];
+
+  if (!sessionId) {
+    return next();
+  }
+
+  const [data] = await db
+    .select({
+      sessionId: userSessions.id,
+      id: usersTable.id,
+      userId: userSessions.userId,
+      name: usersTable.name,
+      email: usersTable.email,
+    })
+    .from(userSessions)
+    .rightJoin(usersTable, eq(usersTable.id, userSessions.userId))
+    .where((table) => eq(table.sessionId, sessionId));
+
+  if (!data) {
+    return next();
+  }
+
+  req.user = data;
+  next();
+});
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running" });
+});
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on PORT: ${PORT}`);
+});
+
+
+controller.js
+------------
+
+import { error } from "node:console";
+import db from "../db/index.js";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+
+export const signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const [existingUser] = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where((table) => eq(table.email, email));
+
+    if (existingUser) {
+      return res.status(400).json({ error: `Email ${email} already taken` });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [user] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({ status: "success", userId: user.id }); // ← this is the auto-generated UUID
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // Generate a session for user
+  const [session] = await db
+    .insert(userSessions)
+    .values({
+      userId: existingUser.id,
+    })
+    .returning({ id: userSessions.id });
+  return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
+};
+
+export const currentPage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  return res.json({ user });
+};
+
+export const updatePage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  const { name } = req.body;
+  await db.update(usersTable).set({ name }).where(eq(usersTable.id, user.id));
+
+  return res.json({ status: "success" });
+};
+
+export default {
+  signUp,
+  logIn,
+  currentPage,
+  updatePage,
+};
+
+
+
+The problem is you are caLLING the databse again and again everytime. Secindly, there is latency.
+These are the problems of the Session-Based Authentication. 
+
+Advantage is we ca revoke or invoke the session whenever needed by us.
+
+
+
+
+
 
 
 

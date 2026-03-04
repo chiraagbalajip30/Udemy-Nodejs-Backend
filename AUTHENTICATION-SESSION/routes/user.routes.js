@@ -7,6 +7,9 @@ const router = express.Router();
 // Returns current logged in User
 router.get("/", controller.currentPage);
 
+// Patch Route
+router.patch("/", controller.updatePage);
+
 // Signup
 router.post("/signup", controller.signUp);
 
