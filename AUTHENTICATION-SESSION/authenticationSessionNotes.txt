@@ -1246,9 +1246,18 @@ Introduction to Authorization and Role-Based Access Control (RBAC)
 
 
 
+Authentication - Does server know who are you?
 
+Authorization -  It is basically the next step of Authentication.
 
+It is purely based on which data can be accessed by whom or which route. Ex: user, admin, etc. 
 
+It is based on Role. 
+
+------------------------------------------------
+
+Video - 63
+-----------
 
 
 
