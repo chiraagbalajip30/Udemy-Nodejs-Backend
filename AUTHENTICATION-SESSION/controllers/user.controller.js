@@ -3,6 +3,7 @@ import db from "../db/index.js";
 import { usersTable, userSessions } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { randomBytes, createHmac } from "node:crypto";
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
   try {
@@ -56,6 +57,7 @@ export const logIn = async (req, res) => {
       email: usersTable.email,
       salt: usersTable.salt,
       password: usersTable.password,
+      name: usersTable.name,
     })
     .from(usersTable)
     .where((table) => eq(table.email, email));
@@ -75,14 +77,18 @@ export const logIn = async (req, res) => {
     return res.status(400).json({ error: "Incorrect Password " });
   }
 
-  // Generate a session for user
-  const [session] = await db
-    .insert(userSessions)
-    .values({
-      userId: existingUser.id,
-    })
-    .returning({ id: userSessions.id });
-  return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
+  // we will create a token instead of using session
+  const payload = {
+    id: existingUser.id,
+    email: existingUser.email,
+    name: existingUser.name,
+  };
+
+  // const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1m" });
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+  // Now this token can be returned to the user back.
+  return res.json({ status: "success", token });
 };
 
 export const currentPage = async (req, res) => {

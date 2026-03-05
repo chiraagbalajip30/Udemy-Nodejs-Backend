@@ -747,10 +747,502 @@ Advantage is we ca revoke or invoke the session whenever needed by us.
 
 
 
+import { error } from "node:console";
+import db from "../db/index.js";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+
+export const signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const [existingUser] = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where((table) => eq(table.email, email));
+
+    if (existingUser) {
+      return res.status(400).json({ error: `Email ${email} already taken` });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [user] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({ status: "success", userId: user.id }); // ← this is the auto-generated UUID
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // Generate a session for user
+  const [session] = await db
+    .insert(userSessions)
+    .values({
+      userId: existingUser.id,
+    })
+    .returning({ id: userSessions.id });
+  return res.json({ status: "success", sessionId: session.id }); //this can be called as token. remember the example and relate
+};
+
+export const currentPage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  return res.json({ user });
+};
+
+export const updatePage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  const { name } = req.body;
+  await db.update(usersTable).set({ name }).where(eq(usersTable.id, user.id));
+
+  return res.json({ status: "success" });
+};
+
+export default {
+  signUp,
+  logIn,
+  currentPage,
+  updatePage,
+};
+
+
+
+This is the final code for controllers for session-based authentication. 
+
+import express from "express";
+import userRouter from "./routes/user.routes.js";
+import db from "./db/index.js";
+import { usersTable, userSessions } from "./db/schema.js";
+import { eq } from "drizzle-orm";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json()); // as we are handling raw data
+
+app.use(async function (req, res, next) {
+  const sessionId = req.headers["session-id"];
+
+  if (!sessionId) {
+    return next();
+  }
+
+  const [data] = await db
+    .select({
+      sessionId: userSessions.id,
+      id: usersTable.id,
+      userId: userSessions.userId,
+      name: usersTable.name,
+      email: usersTable.email,
+    })
+    .from(userSessions)
+    .rightJoin(usersTable, eq(usersTable.id, userSessions.userId))
+    .where((table) => eq(table.sessionId, sessionId));
+
+  if (!data) {
+    return next();
+  }
+
+  req.user = data;
+  next();
+});
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running" });
+});
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on PORT: ${PORT}`);
+});
+
+Index.js file code for session-based Authentication.
+
+
+-------------------------------------------------
+
+Video - 61
+-----------
+Creating Stateless Authentication using JWT (JSON Web Tokens)
+
+
+https://www.jwt.io/
+
+Now we will see how we can avoid overwhelming the db by sending query or req all the time, and how we can increase the speed of the query or execution with the help of JWT. 
+
+
+The idea behind JSW is what if we can create a random string, and actual info about the user like name, etc can be encrypted inside the token. 
+
+
+For example, 
+
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "admin": true,
+  "iat": 1516239022
+}
+
+This payload or info can be converted into random string as below:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+
+
+So, instead of returing the session, we can send or recieve the encoded token, which contains all the information. 
+We don't have to make any API call to the DB to get the data.
+
+These are actually signed tokens. These tokens are created by the server, and everyone can read and understand it. But no one can change the token. The reason is, to change the token we need a secret key. 
+So, we must create a JWT_SECRET in .env file which must be very long, and not guessable. 
+
+CODE PART:
+Now, in the terminal, write the command mentioned below to install the Jwt:
+
+"pnpm i jsonwebtoken"
+
+
+Now, we will refactor the existing session-based authentication code to use the JWT.
+
+
+1. Now when we login, we are not going to create a session. SO we will remove the sesssion creation part of code from the login code in controllers. 
+
+First we store the paload where we insert what all information we want to store in the token. 
+
+ const payload = {
+    id: existingUser.id,
+    email: existingUser.email,
+    name: existingUser.name
+  }
+
+
+Now to create a token, we need to first import jsonwebtoken that is:
+
+"import jwt from 'jsonwebtoken'"
+
+
+Then add secret key inside the .env file as given below:
+
+JWT_SECRET=$uperman
+
+SO, your .env file looks like this:
+
+DATABASE_URL=postgres://postgres:myPassword@localhost:5432/postgres
+JWT_SECRET=$uperman
+
+
+Then write the logic to create the token by signing it with the payload and the secret key present in the .env file.
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+Now this token can be returned to the user back.
+
+
+Now, when i login, i got the below data in postman:
+
+{
+    "status": "success",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIwOWZhYjA0LTVhOTAtNDgyNC1iY2FhLWZiMWE1YTllZTFjNCIsImVtYWlsIjoibW91cnlhMTIzQGV4YW1wbGUuY29tIiwibmFtZSI6Ik1vdXJ5YSIsImlhdCI6MTc3MjY5NzI3OH0.wVninswoMW-m5gwGlNAuaxzyzRttmHT-MM9e_qYeysA"
+}
+
+
+Now, there is no need to store the token in the db. 
+
+
+Now, the login part id done.
+
+
+2. To see the current user logged in is the next step.
+
+For this, we don't really need the middleware which we created for session-based auth in index.js file. SO, we will alter it. 
+
+We dont need session-based as thename in headrs. There is a standard format for this. I have mentioned it below:
+
+ / Header - Bearer <Token>
+
+Then we replace session by token. 
+const tokenHeader = req.headers["session-authorization"];
+
+
+Then add an extra condition to check if the name of the tokenHeader starts with Bearer:
+
+ if (!tokenHeader.startsWith("Bearer")) {
+    return res
+      .status(400)
+      .json({ error: "Authorization Header must start with Bearer" });
+  }
+
+
+
+Now we can extract token if we somehow split it or may be split it using a space after Bearer:
+Bearer <Token>
+
+So the logic is,
+
+  const token = tokenHeader.split(' ')[1];
+
+
+Now, we have to validate that is, decode the token. 
+
+For that, we have to import:
+import jwt from 'jsonwebtoken';
+
+Next, we will decoe it by:
+ const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  req.user = decoded;
+
+
+We can also addother features into the token like expiresIn, etc. 
+
+import { error } from "node:console";
+import db from "../db/index.js";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+import jwt from "jsonwebtoken";
+
+export const signUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if email already exists
+    const [existingUser] = await db
+      .select({ email: usersTable.email })
+      .from(usersTable)
+      .where((table) => eq(table.email, email));
+
+    if (existingUser) {
+      return res.status(400).json({ error: `Email ${email} already taken` });
+    }
+
+    // 2. Create salt + hash password
+    const salt = randomBytes(256).toString("hex");
+
+    const hashedPassword = createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    // 3. Insert new user and return only the id
+    const [user] = await db
+      .insert(usersTable)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: usersTable.id });
+
+    // 4. Send success response
+    return res.status(201).json({ status: "success", userId: user.id }); // ← this is the auto-generated UUID
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const logIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      salt: usersTable.salt,
+      password: usersTable.password,
+      name: usersTable.name,
+    })
+    .from(usersTable)
+    .where((table) => eq(table.email, email));
+
+  if (!existingUser) {
+    return res
+      .status(404)
+      .json({ error: `User with email ${email} doesnot exists` });
+  }
+
+  const salt = existingUser.salt;
+  const existingHash = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (newHash !== existingHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  // we will create a token instead of using session
+  const payload = {
+    id: existingUser.id,
+    email: existingUser.email,
+    name: existingUser.name,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "10m" });
+  // Now this token can be returned to the user back.
+  return res.json({ status: "success", token });
+};
+
+export const currentPage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  return res.json({ user });
+};
+
+export const updatePage = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ error: "You are Not Logged In" });
+  }
+
+  const { name } = req.body;
+  await db.update(usersTable).set({ name }).where(eq(usersTable.id, user.id));
+
+  return res.json({ status: "success" });
+};
+
+export default {
+  signUp,
+  logIn,
+  currentPage,
+  updatePage,
+};
 
 
 
 
+import express from "express";
+import userRouter from "./routes/user.routes.js";
+import db from "./db/index.js";
+import { usersTable, userSessions } from "./db/schema.js";
+import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json()); // as we are handling raw data
+
+app.use(async function (req, res, next) {
+  try {
+    // Header - Bearer <Token>
+    const tokenHeader = req.headers["authorization"];
+
+    if (!tokenHeader) {
+      return next();
+    }
+
+    if (!tokenHeader.startsWith("Bearer")) {
+      return res
+        .status(400)
+        .json({ error: "Authorization Header must start with Bearer" });
+    }
+
+    const token = tokenHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    next();
+  }
+});
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running" });
+});
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on PORT: ${PORT}`);
+});
+
+
+
+
+NOTE - In JWT, once you send the token to the user, you won't be having control to stop the function. SO, best practice is to kepp "expiesIn" for 1 minute.  Then you can regenerate tokens after 1 minute if you want to. 
+
+
+NOTE - SO whenever we are using or building banking systmes like apps, we need to use session-based auth. Whereas, when we are building something like Saas, we can use JWT auth. 
+
+
+
+------------------------------------------------
+
+
+Video - 62
+-----------
+Introduction to Authorization and Role-Based Access Control (RBAC)
 
 
 
