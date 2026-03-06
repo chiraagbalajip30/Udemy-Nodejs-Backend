@@ -2,13 +2,15 @@ import express from "express";
 
 import controller from "../controllers/user.controller.js";
 
+import { ensureAuthenticated } from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
 
 // Returns current logged in User
-router.get("/", controller.currentPage);
+router.get("/", ensureAuthenticated, controller.currentPage);
 
 // Patch Route
-router.patch("/", controller.updatePage);
+router.patch("/", ensureAuthenticated, controller.updatePage);
 
 // Signup
 router.post("/signup", controller.signUp);

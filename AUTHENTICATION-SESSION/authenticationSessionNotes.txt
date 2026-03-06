@@ -1258,6 +1258,55 @@ It is based on Role.
 
 Video - 63
 -----------
+Implementing Role-Based Authorization Logic in Express.js Applications
 
 
 
+Now we will implement the Authorization Practically.
+
+First let's create a route called admin.routes.js. 
+As the name itself says, there are going to be some critical routes in this file which can be accessible only by admin. 
+
+Now we created a basic "/admin/users" route, which gives all the current users list. We have not yet implemented the Authentication and Authorization as well. 
+
+import { error } from "node:console";
+import db from "../db/index.js ";
+import { usersTable, userSessions } from "../db/schema.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+import jwt from "jsonwebtoken";
+
+export const allUsers = async (req, res) => {
+  try {
+    const users = await db
+      .select({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+      })
+      .from(usersTable);
+
+    return res.json({ users });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      error: "Internal server error",
+    });
+  }
+};
+
+export default {
+  allUsers,
+};
+
+
+
+
+Now, I have added the middleware folders, and added all the logic of middleware here, and replaced it with the code in that place.  
+now we will add Authorization. 
+
+Now, we can add a new field in the schema of the table which is role. 
+
+
+If yopu want to access admin rolews, go to drizzle studio, change the role as admin for that particular uuser, and then try to acces it. 

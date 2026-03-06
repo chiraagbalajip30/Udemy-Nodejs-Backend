@@ -4,6 +4,7 @@ import { usersTable, userSessions } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { randomBytes, createHmac } from "node:crypto";
 import jwt from "jsonwebtoken";
+import { ensureAuthenticated } from "../middlewares/auth.middleware.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -57,6 +58,7 @@ export const logIn = async (req, res) => {
       email: usersTable.email,
       salt: usersTable.salt,
       password: usersTable.password,
+      role: usersTable.role,
       name: usersTable.name,
     })
     .from(usersTable)
@@ -82,6 +84,7 @@ export const logIn = async (req, res) => {
     id: existingUser.id,
     email: existingUser.email,
     name: existingUser.name,
+    role: existingUser.role,
   };
 
   // const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1m" });
@@ -92,21 +95,21 @@ export const logIn = async (req, res) => {
 };
 
 export const currentPage = async (req, res) => {
-  const user = req.user;
+  // const user = req.user;
 
-  if (!user) {
-    return res.status(401).json({ error: "You are Not Logged In" });
-  }
+  // if (!user) {
+  //   return res.status(401).json({ error: "You are Not Logged In" });
+  // } // we have used middleware to check if the user is logged in or not.
 
-  return res.json({ user });
+  return res.json({ user: req.user });
 };
 
 export const updatePage = async (req, res) => {
   const user = req.user;
 
-  if (!user) {
-    return res.status(401).json({ error: "You are Not Logged In" });
-  }
+  // if (!user) {
+  //   return res.status(401).json({ error: "You are Not Logged In" });
+  // } // we have used middleware to check if the user is logged in or not.
 
   const { name } = req.body;
   await db.update(usersTable).set({ name }).where(eq(usersTable.id, user.id));
