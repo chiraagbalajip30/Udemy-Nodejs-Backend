@@ -1,3 +1,5 @@
+// was created during authorization video
+
 import jwt from "jsonwebtoken";
 
 export const authenticationMiddleware = async function (req, res, next) {
