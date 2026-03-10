@@ -1,0 +1,98 @@
+Video - 65
+----------
+Introduction to MongoDB (NOSQL)
+
+
+We are going to explore MongoDB which is a NOSQL DB.
+
+NOSQL DB:
+---------
+1. It is an opposite to SQL DB. 
+2. In SQL DB, we store data in a structured or table manner. For ex, in the previous usge of example we had used users table, etc. 
+Most importantly, SQL has relations. For example, userSSessions has relation with the users table. All the rules are applied on the database-level. 
+3. Whereas, there are no rules in the NOSQl DB. All the rules are applied on the application-level that is, Node.js level. We have to validate the rules and everything. There are no rules, no tables nothing. They donot have any structure. 
+4. There are something known as Documents in NOSQL. Data are stored in this format. For example, in QL, we had a column with columnname, with a particular id and everything. Whereas in NOSQL, for example, in the same table, ione column can have id and name, whereas the other column in the same table can have fname and id. The structure of one entry can be different from the other. This means there is no Schema. SO to manage this, we have to do it in the application that is, Node.js. 
+5. Examples of DB:
+SQL DB - Postgres, MySQL, etc.
+NOSQL (Document DB's) - MongoDB, AWS Dynamo DB, etc.
+
+The only advantage of NOSQLDB is there is more dynamicity that is, more flexiblity. 
+
+
+-----------------------------------------------
+
+Video - 65
+-----------
+MongoDB Atlas Setup
+
+
+In this video, we will setup the MongoDb on the cloud. 
+
+1. Go to mongodb.com link.
+2. Then Signup into the account. 
+3. Select "Free" Cluster. Cluster is nothing but a machine running the MongoDB.
+4. Then name whatever you want the cluster to be renamed with. Also, you must select the region always neared to you. For now, we have selected Mumbai which is near to us. 
+5. Then click "Create Deploy" option at the end. 
+
+Once you click the above option, it redirects you to another page where it has given you a password and username to connect. 
+SO, ideally what we have to do is that we have to store the username and password. 
+
+So create a NODE_MONGO project/folder as main one, and create a .env file inside it in vs code. 
+
+chiraagbalajip30_db_user
+Iu97NpJYpNT09vqe
+Just keep it here as of now for emergency, we will refactor it later.
+
+6. Then select a option called "Create Database User". 
+7. Then click "Close". 
+
+Now you can see the cluster is up and running. But to connect to the cluster, we have go to "Daatabse and Network Access", and then into "Network ACcess".  
+
+Then we have to select "Allow accesss from anywhere". But this option has been removed from the app 2 years go. So, I manually eneterd "0.0.0.0/0" in the ip address. It does the same as the removed option. But this is for temporaray option. This has more risks of data which can be found by anyone. Since we are only testing this, we can go ahed with this Ip, as our project is a trial. 
+
+So, this IP Address basically means, anyone can connect to my cluster. 
+
+If we want to add more users, we can add them by clicking Add Database User option in Database Access. 
+
+
+Now if we go into the clusters option on the left, we can basically see the cluster we created. There we can connect to the cluster. 
+
+Click on Connect -> Drivers -> Then there will commands written of what we need to install that is, npm install mongodb, and then they have provided a link for us to connect to the MongoDB that is, mongodb+srv://chiraagbalajip30_db_user:<db_password>@cluster0.yzwn50g.mongodb.net/?appName=Cluster0  
+We have to replace the db_name and password. 
+
+-----------------------------------------------
+CHATGPT:
+Think of it like a cake recipe:
+
+Image = the recipe book + ingredients list + instructions
+→ You can give this recipe to 100 people → it’s always the same
+Container = one actual baked cake
+→ Each person bakes their own cake from the same recipe
+→ They can eat it, add frosting, put it in the fridge — but the original recipe book remains the same
+
+So:
+
+You never run an image directly
+You always create a container from an image
+
+Summary – very short
+
+Image = blueprint (static, read-only, like postgres:16)
+Container = running app created from the image (live PostgreSQL server)
+-------------------------------------------
+
+Earlier, we used to use an ORM to connect to a DB. Earlier we used Drizzle ORM. 
+But here there is an ORM known as Mongoose.
+We will use this heavily to connect to the MongoDB. 
+
+In NOSQL, Tables are known as COllections. 
+You can go to "Browse Collections" option, and look at the collections. ALso, you can see inside Browse collections an sample collection option, where there are sample data (dummy data) like theaters, movies, ect and you can observe how the table or collections in NOSQL are stored. 
+
+SO, in the next videi, we are going to explore how we will install Mongooseand use it by creating a basic CRUD operation application using it. 
+
+
+-------------------------------------------------
+
+
+Video - 66
+----------
