@@ -135,5 +135,42 @@ This is a simple wrapper used to connect to the MongoDB.
 
 Then in index.js file:
 
+import express from "express";
+import { connectMongoDB } from "./connection.js";
 
-    
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
+
+
+Now, we can add a line to connecToMongoDB, and add a url;
+
+SO, in order to read the .env file, we need to install the dotenv package. 
+pnpm i dotenv
+
+Then import this:
+import "dotenv/config";
+
+This will take care of all importings from .env file to your app(express app). 
+
+Then go to clusters in mongodb app, select connect -> Drivers -> select the db_url at the bottom, and replace the password inside it. User name will be already be placed or matched accodingly. 
+
+MONGODB_URL=mongodb+srv://chiraagbalajip30_db_user:Iu97NpJYpNT09vqe@cluster0.yzwn50g.mongodb.net/?appName=Cluster0
+
+This is how your final DB_URL looks like. 
+
+
+Then add dev into the package.json scripts:
+ "scripts": {
+    "dev": "node --watch index.js"
+  },
+
+and run the server by typing
+pnpm dev
+
+Password for safety - Iu97NpJYpNT09vqe
+
+
+
