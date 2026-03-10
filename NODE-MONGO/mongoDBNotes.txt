@@ -96,3 +96,44 @@ SO, in the next videi, we are going to explore how we will install Mongooseand u
 
 Video - 66
 ----------
+MongoDB Mongoose Setup
+
+
+First we have to do:
+1. pnpm init 
+2. pnpm i @types/node @types/express@4.x -D
+3. pnpm i express@4.x
+4. Add type: module in package.json:
+
+  "name": "NODE-MONGO",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  
+
+  5. Install Mongoose - pnpm i mongoose
+
+
+Now create a folder named "Models" where all your schema or collections will go. 
+
+Then create a file known as "connection.js" which is used for connection to the MongoDb. 
+
+
+Now, the first step is to connect to the MongoDb. Look at the documnetaion and do the same as they have done there. Write this code in connection.js file. 
+
+import mongoose from "mongoose";
+
+export const connectMongoDB = async (connectionURL) => {
+  const connection = await mongoose.connect(connectionURL);
+  return connection;
+};
+
+
+This is a simple wrapper used to connect to the MongoDB. 
+
+
+Then in index.js file:
+
+
+    
