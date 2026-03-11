@@ -174,3 +174,142 @@ Password for safety - Iu97NpJYpNT09vqe
 
 
 
+index.js
+--------
+
+import "dotenv/config";
+import express from "express";
+import { connectMongoDB } from "./connection.js";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+connectMongoDB(process.env.MONGODB_URL).then(() =>
+  console.log("MongoDB Connected!"),
+);
+
+app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
+
+
+
+connection.js
+--------------
+
+import mongoose from "mongoose";
+import dns from "node:dns";
+
+// Force Node to use reliable DNS servers
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
+export const connectMongoDB = async (connectionURL) => {
+  const connection = await mongoose.connect(connectionURL);
+
+  console.log("Connected DB:");
+
+  return connection;
+};
+
+
+.env
+------
+
+MONGODB_URL=mongodb+srv://chiraagbalajip30_db_user:Iu97NpJYpNT09vqe@cluster0.yzwn50g.mongodb.net/?appName=Cluster0
+
+
+
+Now, we have to create a model. 
+
+I am just following this documentraion where there is a piece of code, and i am implementing those steps.
+
+https://mongoosejs.com/
+
+
+
+Model - It;s basically like a Schema but on a application-level. 
+
+-----------------------------------------------
+MongoDb is a NOSQL which means it has no schema. But Mongoose is an ORM, which provides schema definition on the application level for mongodb. 
+---------------------------------------------
+
+Code can be directly dumped data into the "data base"(suppose need to add a new entry into the existing mongodb table). But Mongoose adds an extra layer of schema def. where it checks the entry and validates before sending or duming the data into the mongodb table. 
+
+SO, I will create a useer.model.js file within the modules folder. 
+
+import { Schema } from "mongoose";
+
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    salt: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+Now we have defined the schema.
+
+Now we have to create a model using the schema.
+
+So to create that, we have to import model from mongoose package. 
+
+
+import { Schema, model } from "mongoose";
+
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    salt: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+export const User = model('user', userSchema);
+export default User;
+
+
+Now using this 'User" Model, we can do all the operations like findOne, findOneById, insert, etc. 
+
+In simple words, all the "CRUD" operations can be done using this "User" Model. 
+
+
+So, in ther next video, we will see how to create a route for users, and how to signup using mongodb.
+
+
+-------------------------------------------------
+
+Video - 67
+-----------
+
+
+
+
