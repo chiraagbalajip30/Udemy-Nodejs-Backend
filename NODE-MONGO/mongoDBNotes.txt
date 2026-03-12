@@ -5,6 +5,8 @@ Introduction to MongoDB (NOSQL)
 
 We are going to explore MongoDB which is a NOSQL DB.
 
+Mongoose is actually an ODM (Object Document Mapper) instead of an ORM.
+
 NOSQL DB:
 ---------
 1. It is an opposite to SQL DB. 
@@ -309,6 +311,237 @@ So, in ther next video, we will see how to create a route for users, and how to 
 
 Video - 67
 -----------
+Creating a Basic CRUD Application with MongoDB and express
+
+
+we will use this middleware in index.js file:
+app.use(express.json()); // because we are getting something from req.body as a json and also to parse the data
+
+create a router folder, and user routes file.
+
+Import everything. 
+
+
+import express from "express";
+import { User } from "../models/user.model.js";
+import { randomBytes, createHmac } from "node:crypto";
+
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const existingUser = await User.findOne({
+    email,
+  });
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+  const hashedPassword = createHmac("sha256", salt)
+    .update(password)
+    .digest("hex");
+
+  const user = await User.insertOne({
+    name,
+    email,
+    password: hashedPassword,
+    salt,
+  });
+
+  return res.status(201).json({ status: "Success", data: { id: user._id } });
+});
+
+export default router;
+
+
+This is our signup route. Here, he logic is same as we have done for postgressql table. Butthe difference is we use "_id" instead of "id". 
+
+
+Now, I added "chaicode" in the env link.
+
+MONGODB_URL=mongodb+srv://chiraagbalajip30_db_user:Iu97NpJYpNT09vqe@cluster0.yzwn50g.mongodb.net/chaicode?appName=Cluster0
+
+This creates a new collection in the mongodb, admin, sample data, ect. Look at the mongodb server. You will get to know.
+
+Then you will get a table of user which you have entered in the model that is, user.
+
+export const User = model("user", userSchema);
+export default User;
+
+Small u not capital U.
+
+But in the mongodb, under chaicode collection, you will get it as users in plural not user. This is automatically done by mongodb. 
+
+
+Now to see the data inside users in mongodb, you first need to go to postamn, enter some details like name, email and password, and then try the signup route that is, "/user/signup".
+
+
+{
+    "name": "MCB Mongo",
+    "email": "mcbmongo123@gmail.com",
+    "password": "mcbmongo@123"
+}
+
+I added this in the body, and sent a post request for the above route, I got the below output:
+
+{
+    "status": "Success",
+    "data": {
+        "id": "69b276fbea3d8e2779fae43a"
+    }
+}
+
+So, if you go to the ATlas an see now, you will having a document that you just added using postman. 
+
+This is the document that is stored in the Atlas after inserting throughthe postman:
+
+_id: ObjectId('69b276fbea3d8e2779fae43a')
+name: "MCB Mongo"
+email: "mcbmongo123@gmail.com"
+password:"3cfb46c3be2ad1074158a68010bd15fa2ed524832b24392b8fb6629e3c604f42"
+salt:"df45e4f41233dae1d0025a450687c941c3f46f97cfc658df5a6c1d0fc20324ba6c729a…"
+createdAt: 2026-03-12T08:19:07.133+00:00
+updatedAt: 2026-03-12T08:19:07.133+00:00
+__v: 0
+
+
+"__v" - This represents the documnet version number. It is used by Mongoose to track how many times a document has ben updated. 
+
+0 → first version
+1 → updated once
+2 → updated twice
+
+
+Now, I added another user in the postman again. 
+
+If I try to create the thirs document with the existing or same details, it shouldn't work. The route shows:
+
+{
+    "error": "User with email mouryamongo123@gmail.com already exists"
+}
+
+
+
+Now, let us create a login route. 
+
+For that we need to install jsonwebtokens first.
+pnpm i jsonwebtoken
+
+Now let us create a secret key in .env file. 
+
+MONGODB_URL=mongodb+srv://chiraagbalajip30_db_user:Iu97NpJYpNT09vqe@cluster0.yzwn50g.mongodb.net/chaicode?appName=Cluster0
+JWT_SECRET=$uperm@n
+
+
+Code:
+
+import express from "express";
+import { User } from "../models/user.model.js";
+import { randomBytes, createHmac } from "node:crypto";
+import jwt from "jsonwebtoken";
+
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const existingUser = await User.findOne({
+    email,
+  });
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+  const hashedPassword = createHmac("sha256", salt)
+    .update(password)
+    .digest("hex");
+
+  const user = await User.insertOne({
+    name,
+    email,
+    password: hashedPassword,
+    salt,
+  });
+
+  return res.status(201).json({ status: "Success", data: { id: user._id } });
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const existingUser = await User.findOne({
+    email,
+  });
+
+  if (!existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with email ${email} does not exist` });
+  }
+
+  const salt = existingUser.salt;
+  const hashed = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (hashed !== newHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  const payload = {
+    _id: existingUser._id,
+    name: existingUser.name,
+    email: existingUser.email,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+  return res.status(200).json({ status: "Success", token });
+});
+
+export default router;
+
+
+Postman Input:
+
+"/user/login"
+
+{
+    "email": "mouryamongo123@gmail.com",
+    "password": "mouryamongo@123"
+}
+
+
+Output:
+
+{
+    "status": "Success",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OWIyNzkwMzg1ZTMzMWUxYTgxNDYwYzkiLCJuYW1lIjoiTW91cnlhIE1vbmdvIiwiZW1haWwiOiJtb3VyeWFtb25nbzEyM0BnbWFpbC5jb20iLCJpYXQiOjE3NzMzMDkxMDZ9.V_mAFVBPvv_xJyPOVqS0IDmAD6ci020sZdCkRXqo1n4"
+}
+
+
+
+You can copy the token and paste it in jwt.io website, and check how it looks like. 
+
+Now, we have to create a route to check if the current user is logged in or not, and based on that we can create a update route using the "Middleware Approach".
+
+
+--------------------------------------------------
+
+Video - 68
+----------
+
+
+
 
 
 
