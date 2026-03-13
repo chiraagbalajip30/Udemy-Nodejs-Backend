@@ -754,6 +754,60 @@ Nodejs Mongoose Aggregation Pipeline Introduction
 
 
 
+Now we will learn about aggregations. 
+
+Aggregations are useful in MongoDb when there are more number of collections like thousands, lakhs, etc. 
+Suppose you have 10,000 orders(collections), and you need to get the number of orders, for which you must do the sum of all those, and get a single value. ANother case is, you need to count the number of times a single order has been purchased. This is when Aggregation comes into picture. We can use this and do any type of data query. 
+
+In aggregation, there is something known as Stages. 
+
+Go to Atlas -> select Aggreagtions -> Select Stage.
+
+Now if you just want to add a stage where you just wanna do a "match". Search and select it. 
+
+Input:
+
+/**
+ * query: The query in MQL.
+ */
+{
+  "email": {$eq: "chiraagmongo123@gmail.com"}
+}
+
+
+_id
+69b3c5c87ca7700ec06cc309
+name
+"Chiraag Mongooo"
+email
+"chiraagmongo123@gmail.com"
+password
+"0c5780296979ebb2d27b47f0f06e404fae11b9433ea0d96efe6a83b03d848c2d"
+salt
+"d614a98db6ede33cbe2250bd2d0c6469d107386d0e704a425b304a9b248d90b603f119…"
+createdAt
+2026-03-13T08:07:36.690+00:00
+updatedAt
+2026-03-13T08:26:41.595+00:00
+__v
+0
+
+You can also add another stage to couint the number of users by writing "total_users". 
+
+If you add stage1, and it has some result, the next stage will be based on the 1st stage, nopt on the whole collections od db. 
+
+
+Just play around with it, or watch this video again.
+
+
+----------------------------------------------
+
+
+
+
+
+
+
 
 
 
