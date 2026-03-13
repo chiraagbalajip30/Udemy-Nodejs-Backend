@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { connectMongoDB } from "./connection.js";
 import userRouter from "./routes/user.routes.js";
+import { authMiddleware } from "./middlewares/auth.middleware.js";
 
 const app = express();
 
@@ -12,6 +13,8 @@ connectMongoDB(process.env.MONGODB_URL).then(() =>
 );
 
 app.use(express.json()); // because we are getting something from req.body as a json and also to parse the data
+
+app.use(authMiddleware);
 
 app.use("/user", userRouter);
 

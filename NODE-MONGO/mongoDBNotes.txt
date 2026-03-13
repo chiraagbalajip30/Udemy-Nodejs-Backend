@@ -539,6 +539,220 @@ Now, we have to create a route to check if the current user is logged in or not,
 
 Video - 68
 ----------
+Authentication Middleware using Nodejs and Express
+
+Now let us write a middleware functon to see if a current user is logged in or not. 
+
+/** 
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+
+ This is something known as "JS Docs". You have to use this get arelated functions whn clicked dot, and must be mentioned as done above. I have used this in auth.middleware.js file.
+
+
+ /**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+
+import jwt from "jsonwebtoken";
+
+export const authMiddleware = async (req, res, next) => {
+  try {
+    const tokenHeader = req.headers["authorization"];
+
+    if (!tokenHeader) {
+      return next();
+    }
+
+    if (!tokenHeader.startsWith("Bearer")) {
+      return res
+        .status(400)
+        .json({ error: "authorization header must begin with Bearer" });
+    }
+
+    const token = tokenHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
+
+Now import this in index.js file. 
+
+
+import express from "express";
+import { User } from "../models/user.model.js";
+import { randomBytes, createHmac } from "node:crypto";
+import jwt from "jsonwebtoken";
+import { ensureAuthenticated } from "../middlewares/auth.middleware.js";
+
+const router = express.Router();
+
+router.get("/", ensureAuthenticated, async (req, res) => {
+  return res.json({ user: req.user });
+});
+
+router.patch("/", ensureAuthenticated, async (req, res) => {
+  const { name } = req.body;
+  await User.findByIdAndUpdate(req.user._id, {
+    name,
+  });
+
+  return res.json({ status: "success" });
+});
+
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const existingUser = await User.findOne({
+    email,
+  });
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+  const hashedPassword = createHmac("sha256", salt)
+    .update(password)
+    .digest("hex");
+
+  const user = await User.insertOne({
+    name,
+    email,
+    password: hashedPassword,
+    salt,
+  });
+
+  return res.status(201).json({ status: "Success", data: { id: user._id } });
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const existingUser = await User.findOne({
+    email,
+  });
+
+  if (!existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with email ${email} does not exist` });
+  }
+
+  const salt = existingUser.salt;
+  const hashed = existingUser.password;
+
+  const newHash = createHmac("sha256", salt).update(password).digest("hex");
+
+  if (hashed !== newHash) {
+    return res.status(400).json({ error: "Incorrect Password " });
+  }
+
+  const payload = {
+    _id: existingUser._id,
+    name: existingUser.name,
+    email: existingUser.email,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+  return res.status(200).json({ status: "Success", token });
+});
+
+export default router;
+
+
+
+
+import "dotenv/config";
+import express from "express";
+import { connectMongoDB } from "./connection.js";
+import userRouter from "./routes/user.routes.js";
+import { authMiddleware } from "./middlewares/auth.middleware.js";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+connectMongoDB(process.env.MONGODB_URL).then(() =>
+  console.log("MongoDB Connected!"),
+);
+
+app.use(express.json()); // because we are getting something from req.body as a json and also to parse the data
+
+app.use(authMiddleware);
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
+
+
+
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+
+import jwt from "jsonwebtoken";
+
+export const authMiddleware = async (req, res, next) => {
+  try {
+    const tokenHeader = req.headers["authorization"];
+
+    if (!tokenHeader) {
+      return next();
+    }
+
+    if (!tokenHeader.startsWith("Bearer")) {
+      return res
+        .status(400)
+        .json({ error: "authorization header must begin with Bearer" });
+    }
+
+    const token = tokenHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
+export const ensureAuthenticated = async (req, res, next) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json({ error: "You must be authenticated to access this!" });
+  }
+
+  next();
+};
+
+
+
+----------------------------------------------
+
+Video - 69
+-----------
+Nodejs Mongoose Aggregation Pipeline Introduction
+
+
 
 
 
