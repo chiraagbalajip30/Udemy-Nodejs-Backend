@@ -1,0 +1,64 @@
+Video - 70
+------------
+Overview of the URL Shortner project
+
+
+In this particular section, we are going to build our first project "URL Shortner Service". 
+You might have seen services like Dub.co and Bit.ly, which helps you to take a long url and shorten it, and then share it in your social media. 
+They are easy to remember, easy to share, and top of that they provide you analytics as well. 
+
+
+
+------------------------------------------------
+
+Video - 71
+-----------
+Tech Stack : Express, Drizzle ORM, JWT, PostgreSQL, and Zod
+
+
+I have added a README file as well regarding the tasks.
+
+-------------------------------------------------
+
+Video - 72
+-----------
+Bootstrapping a Clean Express Server Setup for Backend Development
+
+
+So, let us initialise the project by entering : "pnpm init" in the terminal. This will give you an "package.json" file. 
+
+
+Then, we will install these as Dev Dependency:  pnpm i @types/node @types/express@4.x -D. Here we get all the node modules, etc. 
+
+
+Then we will install express as a dependency: "pnpm i express@4.x".
+
+
+Now, we will get the express server setup that is, we will make the server up and running. 
+For that, create an index.js file. 
+
+const PORT = process.env.PORT ?? 8000; - This is called as "Nullish Cohesion". 
+
+import express from "express";
+
+const app = express;
+
+const PORT = process.env.PORT ?? 8000;
+
+app.get("?", (req, res) => {
+    return res.json({ status: 'Server is up and running..'});
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on ${PORT}`);
+});
+
+
+The route is working as well when check through the postman. 
+In the next video, we will look into the setup of drizzle and everything.
+
+
+--------------------------------------------------
+
+Video - 73
+-----------
