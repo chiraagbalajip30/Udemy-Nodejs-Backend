@@ -1,0 +1,19 @@
+Video - 70
+------------
+Overview of the URL Shortner project
+
+
+In this particular section, we are going to build our first project "URL Shortner Service". 
+You might have seen services like Dub.co and Bit.ly, which helps you to take a long url and shorten it, and then share it in your social media. 
+They are easy to remember, easy to share, and top of that they provide you analytics as well. 
+
+
+
+------------------------------------------------
+
+Video - 71
+-----------
+Tech Stack : Express, Drizzle ORM, JWT, PostgreSQL, and Zod
+
+
+.
