@@ -62,3 +62,98 @@ In the next video, we will look into the setup of drizzle and everything.
 
 Video - 73
 -----------
+Configuring PostgreSQL with Docker for Local Development Environment
+
+
+Step - 1:
+---------
+Now, we will setup postgres with docker. 
+
+So first create a file named "docker-compose.yml". 
+(We are using this because we don't want to install postgreSQL locally in our machine. Instead, dockercreates an image of postgres, and a container for this inside that to let us build).
+
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
+
+We can also mount a "volume' so that the data is persistent.  
+
+
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
+
+We can also mount a "volume' so that the data is persistent. 
+
+Now, turn on the docker desktop application. 
+
+Then enter the command:  "docker compose up -d"  
+Then it will start, and the network, volume and the container will created and started. 
+
+
+
+docker compose up -d
+[+] up 3/3
+ ✔ Network project-url-shortner_d... Created 1.1s
+ ✔ Volume project-url-shortner_db... Created 0.1s
+ ✔ Container project-url-shortner... Created 1.5s
+
+Chatgpt:
+-----------
+
+🔹 Simple analogy
+
+Think of it like this:
+
+Container = rented room 🏠
+Volume = locker 🔐
+
+If you leave the room:
+👉 Your stuff in the locker is still safe
+
+
+🔹 When to use volumes
+
+Use volumes when:
+
+Database (PostgreSQL, MongoDB) ✅
+File uploads (images, PDFs) ✅
+Logs or backups ✅
+🔹 Final answer
+
+👉 We use volumes to persist data even after container restarts or deletion
+👉 Without volumes, all data inside containers is temporary
+
+
+
+
+
+
