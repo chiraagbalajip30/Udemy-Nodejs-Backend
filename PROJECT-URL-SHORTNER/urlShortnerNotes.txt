@@ -278,4 +278,6 @@ Desiogning and Implementing the User Schema using Drizzle ORM
 
 firstName: varchar('first_name', {length: 55}).notNull()
 
-We can also alter the names in such a way that, firstName will be used in Node.jsthat is backend, and first_name w
+We can also alter the names in such a way that, firstName will be used in Node.jsthat is backend, and first_name will be used in the database. 
+
+
