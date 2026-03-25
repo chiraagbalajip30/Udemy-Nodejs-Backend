@@ -65,8 +65,8 @@ Video - 73
 Configuring PostgreSQL with Docker for Local Development Environment
 
 
-Step - 1:
----------
+Step - 1  -  Setup Docker
+----------------------------
 Now, we will setup postgres with docker. 
 
 So first create a file named "docker-compose.yml". 
@@ -153,7 +153,129 @@ Logs or backups ✅
 👉 Without volumes, all data inside containers is temporary
 
 
+services:
+  db:
+    image: postgres:17.4
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
+
+---------------------------------------------------
+
+Video - 74
+-----------
+Installing and Setting Up Drizzle ORM for Database
+
+
+Step-2  -   Install node-postgres package
+--------------------------------------------
+Now let's get the Drizzle up and running. 
+
+
+Look at the documention of Dirzzle ORm -> PostgreSQL.
+
+Step-1
+--
+Instal these:
+pnpm add drizzle-orm pg dotenv
+pnpm add -D drizzle-kit tsx @types/pg
+
+
+Step-3  -  Setup connection variables
+------------------------------------------
+Create .env file and place the database_url within it.
+
+
+Step - 4  -  Connect Drizzle ORM to the database
+-------------------------------------------------
+Create a index.js file in the src directory and initialize the connection:
+
+TRhis file is used for connection purpose between drizzle orm and the database. 
+
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+
+export const db = drizzle(process.env.DATABASE_URL);
+export default db;
+
+
+Step - 5  -  Create a table
+------------------------------
+Create a schema.ts file in the src/db directory and declare your table:
+
+
+Create models folder, and add the tables or models howmuch ever there are that is users, bboks, etc. 
+
+users.table.js code:
+
+import { integer, pgTable, varchar, uuid } from "drizzle-orm/pg-core";
+
+export const usersTable = pgTable("users", {
+  id: uuid().primaryKey().defaultRandom(),
+});
+
+
+We have only added minimal code as of now and will be added later looking at the requirements. 
 
 
 
 
+Step - 6  -  Setup Drizzle config file
+------------------------------
+Drizzle config - a configuration file that is used by Drizzle Kit and contains all the information about your database connection, migration folder and schema files.
+
+Create a drizzle.config.js file in the root of your project and add the following content:
+
+
+Create a index.js file inside models, and import usersTable here:
+
+export {usersTable} from "./user.model";
+
+
+
+Inside drzzle.config.js file, add this looking at the docs, but change the paths:
+
+import 'dotenv/config';
+import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+  out: './drizzle',
+  schema: './models/index.js',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
+  },
+});
+
+
+
+Step 6 - Applying changes to the database
+---------------------------------------------
+You can directly apply changes to your database using the drizzle-kit push command. This is a convenient method for quickly testing new schema designs or modifications in a local development environment, allowing for rapid iterations without the need to manage migration files:
+
+
+npx drizzle-kit push
+
+
+So, in package.json file, create a command for this as well:
+
+
+------------------------------------------------
+
+Video - 75
+------------
+Desiogning and Implementing the User Schema using Drizzle ORM
+
+firstName: varchar('first_name', {length: 55}).notNull()
+
+We can also alter the names in such a way that, firstName will be used in Node.jsthat is backend, and first_name w
