@@ -274,7 +274,7 @@ So, in package.json file, create a command for this as well:
 
 Video - 75
 ------------
-Desiogning and Implementing the User Schema using Drizzle ORM
+Designing and Implementing the User Schema using Drizzle ORM
 
 firstName: varchar('first_name', {length: 55}).notNull()
 
@@ -304,6 +304,59 @@ Then enter "pnpm db:push", and then look into the drizzle studio.
 
 Video - 76
 -----------
+Creating a Secure Signup Route
 
 
+import express from "express";
+import { db } from "../db/index.js";
+import { usersTable } from "../models/index.js";
+import { randomBytes, createHmac } from "node:crypto";
 
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with Email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+
+  const hashedPassword = createHmac("sha-256", salt)
+    .update(password)
+    .digest("hex");
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({
+      firstName,
+      lastName,
+      email,
+      salt,
+      password: hashedPassword,
+    })
+    .returning({ id: usersTable.id });
+
+  return res.status(201).json({ data: { userId: user.id } });
+});
+
+export default router;
+
+
+This is the signup route code.
+In the next video, we will use "Zod" and make it even more elegant.
+
+Also, add app.use(express.json()) middleware in index.js file, as we are dealing with json data.
+
+
+-------------------------------------------------
