@@ -360,3 +360,182 @@ Also, add app.use(express.json()) middleware in index.js file, as we are dealing
 
 
 -------------------------------------------------
+
+Video - 77
+------------
+Adding ZOD for Validating Incoming User Signup and Login Data
+
+
+| Without Zod             | With Zod               |
+| ----------------------- | ---------------------- |
+| No validation           | Strong validation      |
+| Risk of bad data        | Clean, structured data |
+| Errors handled manually | Auto error messages    |
+| Can crash easily        | Safer API              |
+
+
+Course Content:
+----------------
+
+"Zod" is basically a validation library which is used and helpful during the "validation" times. 
+
+Zod is a TypeScript-first validation library. Using Zod, you can define schemas you can use to validate data, from a simple string to a complex nested object.
+
+Zero external dependencies
+Works in Node.js and all modern browsers
+Tiny: 2kb core bundle (gzipped)
+Immutable API: methods return a new instance
+Concise interface
+Works with TypeScript and plain JS
+Built-in JSON Schema conversion
+Extensive ecosystem
+
+Step - 1
+----------
+Installation Command:
+
+pnpm i zod
+
+You can see zod will be installed in package.json.
+
+Step - 2
+----------
+Now let us create a folder as validation, schema or utils. But for now we will call it as Validation. 
+
+Then inside that folder, create a file named "request.validation.js". 
+Tghis is the file where I am going to create request fro the incoming files. 
+Example, ?signup route in user.route.js is an incoming request. This is where we need to create a validation request. 
+
+
+FIrst import this:
+import { z } from 'zod';
+
+Using this we can create a schema. 
+
+Go through the documentation and check all the pasword, email and all the schemas. For password we can give min and max length. It is more complex, soo go check out the docs. 
+
+
+import { z } from 'zod';
+
+
+export const signupPostRequestBodySchema = z.object({
+    firstName: z.string(),
+    lastName: z.string().optional(),
+    email: z.string().email(),
+    password: z.string().min(3),
+})
+
+Now we will import this into the user.route.js file. 
+
+import express from "express";
+import { db } from "../db/index.js";
+import { usersTable } from "../models/index.js";
+import { randomBytes, createHmac } from "node:crypto";
+import { signupPostRequestBodySchema } from "../validation/request.validation.js";
+
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const validationResult = await signupPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    res.status(400).json({ error: validationResult.error.format() });
+  }
+
+  const { firstName, lastName, email, password } = validationResult.data;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with Email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+
+  const hashedPassword = createHmac("sha-256", salt)
+    .update(password)
+    .digest("hex");
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({
+      firstName,
+      lastName,
+      email,
+      salt,
+      password: hashedPassword,
+    })
+    .returning({ id: usersTable.id });
+
+  return res.status(201).json({ data: { userId: user.id } });
+});
+
+export default router;
+
+
+This si the code using the imported zod schema.
+
+Now, go to index.js file, and a  a userRouter route:
+
+import express from "express";
+
+import userRouter from "./routes/user.routes.js";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running.." });
+});
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
+});
+
+
+Now in Postman,
+
+Enter the "POST" route " http://localhost:8000/user/signup", with the input in raw json body as below:
+
+
+{
+    "firstName": "Mourya",
+    "lastName": "chiraag Balaji",
+    "email": "mouryachiraagbalaji@gmail.com",
+    "password": "mouryachiraagbalaji123"
+}
+
+
+The output is a userId generated:
+
+{
+    "data": {
+        "userId": "4d3573bd-80d6-4d3a-aa95-622190104865"
+    }
+}
+
+Now, if you go to Drizzle Studio and check, a user will be added.
+
+Here, the "signUp" route logic is completed.
+
+
+----------------------------------------------
+
+Video - 78
+----------
+
+
