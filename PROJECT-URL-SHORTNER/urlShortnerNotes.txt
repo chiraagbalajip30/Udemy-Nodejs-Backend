@@ -713,5 +713,8 @@ export async function getUserByEmail(email) {
 
 Video - 80
 ---------
+Building a Login Route with JWT Authentication and Token Response
 
+
+.
 
