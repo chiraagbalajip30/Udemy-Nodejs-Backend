@@ -538,4 +538,180 @@ Here, the "signUp" route logic is completed.
 Video - 78
 ----------
 
+{
+    "firstName": "MCB",
+    "lastName": "mcb",
+    "email": "mcb123@gmail.com",
+    "password": "mcb123"
+}
+
+
+{
+    "data": {
+        "userId": "2342e1e6-6cef-4d52-871f-ba4ecf57be07"
+    }
+}
+
+
+
+Here in code, 
+
+
+import express from "express";
+import { db } from "../db/index.js";
+import { usersTable } from "../models/index.js";
+import { eq } from "drizzle-orm";
+import { randomBytes, createHmac } from "node:crypto";
+import { signupPostRequestBodySchema } from "../validation/request.validation.js";
+
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const validationResult = await signupPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    res.status(400).json({ error: validationResult.error.format() });
+  }
+
+  const { firstName, lastName, email, password } = validationResult.data;
+
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with Email ${email} already exists` });
+  }
+
+  const salt = randomBytes(256).toString("hex");
+
+  const hashedPassword = createHmac("sha-256", salt)
+    .update(password)
+    .digest("hex");
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({
+      firstName,
+      lastName,
+      email,
+      salt,
+      password: hashedPassword,
+    })
+    .returning({ id: usersTable.id });
+
+  return res.status(201).json({ data: { userId: user.id } });
+});
+
+export default router;
+
+
+
+
+We are using the salt or some other piece of code repeatedly for login route too. So, we must refactor it by saving the logics in separate file or folder, and then must be used whenever required.
+
+Create a folder named "Utils". Then create a file named "hash.js", and move the logic there. 
+
+
+user.route.js
+--------------
+
+import express from "express";
+import { db } from "../db/index.js";
+import { usersTable } from "../models/index.js";
+import { signupPostRequestBodySchema } from "../validation/request.validation.js";
+import { hashPasswordWithSalt } from "../utils/hash.js";
+import { getUserByEmail } from "../services/user.service.js";
+
+const router = express.Router();
+
+router.post("/signup", async (req, res) => {
+  const validationResult = await signupPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    res.status(400).json({ error: validationResult.error.format() });
+  }
+
+  const { firstName, lastName, email, password } = validationResult.data;
+
+  const existingUser = await getUserByEmail(email);
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ error: `User with Email ${email} already exists` });
+  }
+
+  const { salt, password: hashedPassword } = hashPasswordWithSalt(password);
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({
+      firstName,
+      lastName,
+      email,
+      salt,
+      password: hashedPassword,
+    })
+    .returning({ id: usersTable.id });
+
+  return res.status(201).json({ data: { userId: user.id } });
+});
+
+export default router;
+
+
+hash.js
+--------
+import { randomBytes, createHmac } from "node:crypto";
+
+export function hashPasswordWithSalt(password) {
+  const salt = randomBytes(256).toString("hex");
+
+  const hashedPassword = createHmac("sha-256", salt)
+    .update(password)
+    .digest("hex");
+
+  return { salt, password: hashedPassword };
+}
+
+
+
+uer.service.js
+--------------
+
+import { db } from "../db/index.js";
+import { usersTable } from "../models/index.js";
+import { eq } from "drizzle-orm";
+
+export async function getUserByEmail(email) {
+  const [existingUser] = await db
+    .select({
+      id: usersTable.id,
+      firstName: usersTable.firstName,
+      lastName: usersTable.lastName,
+      email: usersTable.email,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  return existingUser;
+}
+
+
+
+------------------------------------------------
+
+Video - 80
+---------
+
 

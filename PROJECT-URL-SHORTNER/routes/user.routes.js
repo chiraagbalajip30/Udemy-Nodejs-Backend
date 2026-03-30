@@ -1,9 +1,9 @@
 import express from "express";
 import { db } from "../db/index.js";
 import { usersTable } from "../models/index.js";
-import { eq } from "drizzle-orm";
-import { randomBytes, createHmac } from "node:crypto";
 import { signupPostRequestBodySchema } from "../validation/request.validation.js";
+import { hashPasswordWithSalt } from "../utils/hash.js";
+import { getUserByEmail } from "../services/user.service.js";
 
 const router = express.Router();
 
@@ -18,12 +18,7 @@ router.post("/signup", async (req, res) => {
 
   const { firstName, lastName, email, password } = validationResult.data;
 
-  const [existingUser] = await db
-    .select({
-      id: usersTable.id,
-    })
-    .from(usersTable)
-    .where(eq(usersTable.email, email));
+  const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return res
@@ -31,11 +26,7 @@ router.post("/signup", async (req, res) => {
       .json({ error: `User with Email ${email} already exists` });
   }
 
-  const salt = randomBytes(256).toString("hex");
-
-  const hashedPassword = createHmac("sha-256", salt)
-    .update(password)
-    .digest("hex");
+  const { salt, password: hashedPassword } = hashPasswordWithSalt(password);
 
   const [user] = await db
     .insert(usersTable)
