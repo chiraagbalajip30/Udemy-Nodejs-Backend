@@ -995,6 +995,115 @@ export default router;
 
 Video - 81
 -----------
+Creating Authentication Middleware to Extract and Validate Current User
+
+
+Create a folder named "middleware" and a file named auth.middleware.js".
+
+
+Then write "JSDocs" above the function:
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next 
+ */
+
+function authenticationMiddleware(req, res, next) {}
+
+
+👉 JSDoc is a way to add type + documentation to JavaScript using comments
+
+It helps:
+
+Editors (like VS Code) understand your code
+Give autocomplete + suggestions
+Show types like TypeScript (without using TypeScript)
+
+
+export function validateUserToken(token) {
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+I wrote the decoded logic in token.js file by creating an funnction, and then import this in the auth.middleware.js file. 
+
+
+import { validateUserToken } from "../utils/token.js";
+
+/**
+ *
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
+
+export const authenticationMiddleware = async function (req, res, next) {
+  try {
+    const authHeader = req.headers["authorization"];
+
+    if (!authHeader) {
+      return next();
+    }
+
+    if (!authHeader.startsWith("Bearer")) {
+      return res
+        .status(400)
+        .json({ error: "authorization header must start with Bearer" });
+    }
+
+    const [_, token] = authHeader.split(" "); // [Bearer, <TOKEN>]
+
+    const payload = validateUserToken(token);
+    req.user = payload;
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
+
+This is how auth.middleware.js file looks like.
+
+Now, we must import auth.middleware in index.js file.
+
+import express from "express";
+
+import userRouter from "./routes/user.routes.js";
+import {authenticationMiddleware} from "./middlewares/auth.middleware.js";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json());
+app.use(authenticationMiddleware);
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running.." });
+});
+
+app.use("/user", userRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
+});
+
+
+
+With this, we have successfully setup a "Authentication Middleware" in the index.js file. 
+
+
+---------------------------------------------
+
+Video - 82
+------------
+
 
 
 
