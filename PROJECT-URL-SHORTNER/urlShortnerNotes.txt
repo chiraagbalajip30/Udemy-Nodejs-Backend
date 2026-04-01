@@ -1156,7 +1156,231 @@ Video - 83
 Creating a Schema for Shortened URLs Using Drizzle ORM
 
 
-.
+Go to READM.md file, and look athe first route we have to build which is "/shorten" POST route, which shortens the long url and is an "authenticated route" by the way because only signed users cannaccess this. 
+
+
+Create a file named "url.routes.js" inside "routes" folder. 
+
+
+import express from "express";
+
+const router = express.Router();
+
+router.post("/shorten", async function (req, res) {
+  const userID = req.user.id;
+
+  if (!userID) {
+    return res
+      .status(401)
+      .json({ error: "You must be Logged In to access this resource" });
+  }
+
+  
+});
+
+export default router;
+
+
+Now we have done our "Authentication" where it checks users exists or not or logged in user ornot.
+
+Now, whatever comes in the request.body must go to the validation. So, create a brand new schema in validation foler and request.validation.js file.
+
+
+
+export const shortenPostRequestBodySchema = z.object({
+  url: z.string().url(),
+});
+
+
+Then in url.route.js file:
+
+
+import express from "express";
+import { shortenPostRequestBodySchema } from "../validation/request.validation.js";
+
+const router = express.Router();
+
+router.post("/shorten", async function (req, res) {
+  const userID = req.user.id;
+
+  if (!userID) {
+    return res
+      .status(401)
+      .json({ error: "You must be Logged In to access this resource" });
+  }
+
+  const validationResult = await shortenPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+});
+
+export default router;
+
+
+The below code is to check if the current user is logged in or not:
+
+const userID = req.user.id;
+
+  if (!userID) {
+    return res
+      .status(401)
+      .json({ error: "You must be Logged In to access this resource" });
+  }
+
+  const validationResult = await shortenPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  Then this is for the validation:
+
+   if (validationResult.error) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+
+
+
+Now, we need to write the "Insert" Logic. For that, we need to import db from /db/index.js and urlsTable from /models/index.js. 
+
+import { db } from "../db/index.js";
+import { urlsTable } from "../models/index.js";
+
+
+Install and then import "Nanoid". Search nanoid nodejs docs or just th ename, browse through it. 
+
+"pnpm i nanoid"
+
+
+import express from "express";
+import { shortenPostRequestBodySchema } from "../validation/request.validation.js";
+import { nanoid } from "nanoid";
+import { db } from "../db/index.js";
+import { urlsTable } from "../models/index.js";
+
+const router = express.Router();
+
+router.post("/shorten", async function (req, res) {
+  const userID = req.user.id;
+
+  if (!userID) {
+    return res
+      .status(401)
+      .json({ error: "You must be Logged In to access this resource" });
+  }
+
+  const validationResult = await shortenPostRequestBodySchema.safeParseAsync(
+    req.body,
+  );
+
+  if (validationResult.error) {
+    return res.status(400).json({ error: validationResult.error });
+  }
+
+  const { url, code } = validationResult.data;
+
+  const shortCode = code ?? nanoid(6);
+
+  const [result] = await db
+    .insert(urlsTable)
+    .values({
+      shortCode,
+      targetURL: url,
+      userId: req.user.id,
+    })
+    .returning({
+      id: urlsTable.id,
+      shortCode: urlsTable.shortCode,
+      targetURL: urlsTable.targetURL,
+    });
+
+  return res
+    .status(201)
+    .json({
+      id: result.id,
+      shortCode: result.shortCode,
+      targetURL: result.targetURL,
+    });
+});
+
+export default router;
+
+
+
+Now import the route in index.js file. 
+
+import express from "express";
+
+import userRouter from "./routes/user.routes.js";
+import { authenticationMiddleware } from "./middlewares/auth.middleware.js";
+import urlRouter from "./routes/url.routes.js";
+
+const app = express();
+
+const PORT = process.env.PORT ?? 8000;
+
+app.use(express.json());
+app.use(authenticationMiddleware);
+
+app.get("/", (req, res) => {
+  return res.json({ status: "Server is up and running.." });
+});
+
+app.use("/user", userRouter);
+app.use(urlRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
+});
+
+
+We didnot put any "/" roue because we want it to be the root. So, if we type "/shorten" we will get that particular thing. If any other route is typed, it will appear. 
+
+
+
+http://localhost:8000/shorten
+
+For this route, enter the token and the body:
+
+{
+    "url": "https://mcb1234.dev"
+}
+
+output will appear as:
+
+{
+    "id": "4106f625-a1c8-45d7-b048-eb97f42ad76d",
+    "shortCode": "1yfx-2",
+    "targetURL": "https://mcb1234.dev"
+}
+
+
+
+But if you give the short code as well:
+
+{
+    "url": "https://mcb1234.dev",
+    "code": "website"
+}
+
+
+{
+    "id": "a31f5e40-d7cf-437f-aec9-652fe909ed5d",
+    "shortCode": "website",
+    "targetURL": "https://mcb1234.dev"
+}
+
+
+
+--------------------------------------------------
+
+Video - 84
+-----------
+
+
+
 
 
 
