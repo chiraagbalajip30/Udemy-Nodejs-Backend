@@ -1103,8 +1103,60 @@ With this, we have successfully setup a "Authentication Middleware" in the index
 
 Video - 82
 ------------
+Handling Shorten URL Requests via POST and Generating Unique Shortcodes
 
 
+Create a file named "url.model.js" inside "models" folder "to create a schema". 
+
+The basic working of this project is: 
+Let's say our domain is "mcb.com", and we type a short code next to it which is very unique that is, one url has one unique short code, and shouldn't be used or repeated for other urls.
+
+mcb.com/xywer => mouryachirrag.development
+
+If I type the above url with domain and short code "mcb.com/xywer", it must be redirected to the long url "mouryachirrag.development".
+
+
+shortcode: varchar("code", { length: 155 })
+Here, we are renaming shortcode column into code inside the db. 
+
+
+import { pgTable, varchar, text, uuid, timestamp } from "drizzle-orm/pg-core";
+import { usersTable } from "./user.model.js";
+
+export const urlsTable = pgTable("urls", {
+  id: uuid().primaryKey().defaultRandom(),
+
+  shortcode: varchar("code", { length: 155 }).notNull().unique(),
+  targetURL: text("target_url").notNull(),
+
+  userId: uuid("user_id").references(() => usersTable.id),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
+});
+
+
+This is how the table or schema of urls look like. Shortcode is the shortcode generated for the url, targetURL is the main or lengthy url that a user gives, and userId is the id of a user who has created it which points out who created this. 
+
+
+After doing this, add this to index.js inside models folder:
+
+export { usersTable } from "./user.model.js";
+export { urlsTable } from "./url.model.js";
+
+
+As we have inserted a new table, we must run a command "pnpm db:push" in the termainal. 
+
+
+
+----------------------------------------------
+
+Video - 83
+-----------
+Creating a Schema for Shortened URLs Using Drizzle ORM
+
+
+.
 
 
 
