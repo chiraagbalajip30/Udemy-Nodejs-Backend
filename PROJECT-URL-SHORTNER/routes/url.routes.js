@@ -40,4 +40,20 @@ router.post("/shorten", ensureAuthenticated, async function (req, res) {
   });
 });
 
+router.get("/:shortcode", async function (req, res) {
+  const code = req.params.shortcode;
+  const [result] = await db
+    .select({
+      targetURL: urlsTable.targetURL,
+    })
+    .from(urlsTable)
+    .where(eq(urlsTable.shortcode, code));
+
+  if (!result) {
+    return res.status(404).json({ error: "Invalid URL" });
+  }
+
+  return res.redirect(result.targetURL);
+});
+
 export default router;
