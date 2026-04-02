@@ -40,6 +40,15 @@ router.post("/shorten", ensureAuthenticated, async function (req, res) {
   });
 });
 
+router.get("/codes", ensureAuthenticated, async function (req, res) {
+  const codes = await db
+    .select()
+    .from(urlsTable)
+    .where(eq(urlsTable.userId, req.user.id));
+
+  return res.json({ codes });
+});
+
 router.get("/:shortcode", async function (req, res) {
   const code = req.params.shortcode;
   const [result] = await db
