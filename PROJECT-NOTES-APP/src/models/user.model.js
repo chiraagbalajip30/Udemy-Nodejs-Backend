@@ -14,18 +14,3 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });
-
-// export const notesTable = pgTable("notes", {
-//   id: uuid().primaryKey().defaultRandom(),
-
-//   firstName: varchar("first_name", { length: 55 }).notNull(),
-//   lastName: varchar("last_name", { length: 55 }),
-
-//   email: varchar("email", { length: 55 }).notNull().unique(),
-
-//   password: text().notNull(),
-//   salt: text().notNull(),
-
-//   createdAt: timestamp("created_at").defaultNow().notNull(),
-//   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
-// });
