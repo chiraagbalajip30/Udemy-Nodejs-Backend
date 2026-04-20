@@ -11,7 +11,6 @@ const PORT = process.env.PORT ?? 8000;
 // Middleware
 app.use(express.json());
 app.use(authenticationMiddleware);
-app.use("/notes", notesRouter);
 
 // Routes
 app.get("/", (req, res) => {
@@ -19,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRouter);
+app.use("/notes", notesRouter);
 
 // Start Server
 app.listen(PORT, () => {

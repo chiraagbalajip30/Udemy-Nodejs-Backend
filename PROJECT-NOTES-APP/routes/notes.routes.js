@@ -100,7 +100,7 @@ router.delete("/:id", ensureAuthenticated, async (req, res) => {
 // UPDATE NOTE
 router.put("/:id", ensureAuthenticated, async (req, res) => {
   try {
-    const validationResult = await updateNoteSchema.safeParseAsync(req.body);
+    const validationResult = await updateNotesSchema.safeParseAsync(req.body);
 
     if (!validationResult.success) {
       return res.status(400).json({
