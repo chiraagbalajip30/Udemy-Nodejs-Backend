@@ -5,7 +5,7 @@ import Signup from "./pages/Signup";
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Routes>
         {/* Auth */}
         <Route path="/login" element={<Login />} />
@@ -16,7 +16,6 @@ const App = () => {
       </Routes>
     </div>
   );
-  F;
 };
 
 export default App;
