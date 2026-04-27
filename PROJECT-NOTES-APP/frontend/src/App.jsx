@@ -1,7 +1,22 @@
-function App() {
+import { Route, Routes } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
+const App = () => {
   return (
-      <div className="font-light text-red-900">App</div>
+    <div className="min-h-screen bg-gray-50">
+      <Routes>
+        {/* Auth */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* App */}
+        <Route path="/" element={<Dashboard />} />
+      </Routes>
+    </div>
   );
-}
+  F;
+};
 
 export default App;
