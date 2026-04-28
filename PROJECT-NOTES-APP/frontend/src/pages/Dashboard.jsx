@@ -33,12 +33,41 @@ export default function Dashboard() {
     fetchNotes();
   }, []);
 
+  const handleCreateNote = async (title, content) => {
+    if (!title.trim()) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:8000/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      // ✅ Update UI instantly
+      setNotes((prev) => [data.data, ...prev]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
       <Navbar />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
-        <CreateNote />
+        <CreateNote onCreate={handleCreateNote} />
 
         <h2 className="mb-4 text-lg font-medium text-slate-100">Your Notes</h2>
 
