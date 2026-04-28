@@ -5,9 +5,15 @@ import toast from "react-hot-toast";
 const Login = () => {
   const navigate = useNavigate();
 
+  // =========================
+  // 🔹 STATES
+  // =========================
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // =========================
+  // 🔹 REDIRECT IF LOGGED IN
+  // =========================
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -15,6 +21,9 @@ const Login = () => {
     }
   }, []);
 
+  // =========================
+  // 🔹 LOGIN HANDLER
+  // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,36 +41,44 @@ const Login = () => {
 
       const data = await res.json();
 
+      // ❌ Login failed
       if (!res.ok) {
-        // alert(data.error || "Login failed");
         toast.error(data.error || "Login failed");
         return;
       }
 
-      // ✅ Save token
-      // localStorage.setItem("token", data.data.token);
+      // =========================
+      // 🔥 SESSION SETUP (IMPORTANT)
+      // =========================
+      const now = Date.now();
 
-      // Expiry Time and Token Save
-      const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hour
-
+      // 🔐 Token
       localStorage.setItem("token", data.data.token);
-      localStorage.setItem("expiry", expiryTime);
 
-      // Add Toast Success Message
+      // ⏱️ Session timing
+      localStorage.setItem("expiry", now + 10 * 60 * 1000); // 10 mins
+      localStorage.setItem("maxExpiry", now + 60 * 60 * 1000); // 60 mins
+
+      // =========================
+      // 🔹 SUCCESS TOAST
+      // =========================
       toast.success("Logged in successfully");
 
-      // ✅ Redirect to dashboard
+      // =========================
+      // 🔹 REDIRECT
+      // =========================
       navigate("/");
     } catch (error) {
       console.error(error);
-      // alert("Server error");
       toast.error("Server error");
     }
   };
 
+  // =========================
+  // 🔹 UI
+  // =========================
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-cyan-950 px-4">
-      {/* Card */}
       <div className="w-full max-w-md rounded-2xl border border-cyan-100/15 bg-slate-900/70 p-8 shadow-2xl shadow-cyan-900/20 backdrop-blur">
         {/* Heading */}
         <div className="mb-6 text-center">

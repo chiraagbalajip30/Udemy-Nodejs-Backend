@@ -2,12 +2,19 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import CreateNote from "../components/CreateNote";
 import NoteCard from "../components/NoteCard";
-import toast, { ToastIcon } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
+  // =========================
+  // 🔹 STATES
+  // =========================
   const [notes, setNotes] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [warned, setWarned] = useState(false);
 
+  // =========================
+  // 🔹 FETCH NOTES
+  // =========================
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -19,8 +26,13 @@ export default function Dashboard() {
           },
         });
 
+        // 🔐 Token expired
         if (res.status === 401) {
           localStorage.removeItem("token");
+          localStorage.removeItem("expiry");
+          localStorage.removeItem("maxExpiry");
+
+          toast.error("Session expired");
           window.location.href = "/login";
           return;
         }
@@ -32,7 +44,7 @@ export default function Dashboard() {
           return;
         }
 
-        setNotes(data.data); // 🔥 store notes
+        setNotes(data.data);
       } catch (error) {
         console.error(error);
       }
@@ -41,32 +53,70 @@ export default function Dashboard() {
     fetchNotes();
   }, []);
 
-  // TIMER useEffect Logic
+  // =========================
+  // 🔹 SESSION TIMER
+  // =========================
   useEffect(() => {
-    const expiry = localStorage.getItem("expiry");
-
-    if (!expiry) return;
-
     const interval = setInterval(() => {
+      const expiry = Number(localStorage.getItem("expiry"));
+
+      if (!expiry) return;
+
       const remaining = expiry - Date.now();
 
+      // ⛔ Expired
       if (remaining <= 0) {
         clearInterval(interval);
 
         localStorage.removeItem("token");
         localStorage.removeItem("expiry");
+        localStorage.removeItem("maxExpiry");
 
         toast.error("Session expired");
-
         window.location.href = "/login";
       } else {
         setTimeLeft(remaining);
+
+        // ⚠️ Warning at 2 minutes
+        if (remaining <= 2 * 60 * 1000 && !warned) {
+          toast("⚠️ Session expiring in 2 minutes");
+          setWarned(true);
+        }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [warned]);
 
+  // =========================
+  // 🔹 EXTEND SESSION
+  // =========================
+  const handleExtendSession = () => {
+    const expiry = Number(localStorage.getItem("expiry"));
+    const maxExpiry = Number(localStorage.getItem("maxExpiry"));
+
+    if (!expiry || !maxExpiry) return;
+
+    const remainingPossible = maxExpiry - expiry;
+
+    // ❌ Already max
+    if (remainingPossible <= 0) {
+      toast("Max session reached");
+      return;
+    }
+
+    const newExpiry = expiry + remainingPossible;
+
+    localStorage.setItem("expiry", newExpiry);
+
+    setTimeLeft(newExpiry - Date.now());
+
+    toast.success("Session extended to full time");
+  };
+
+  // =========================
+  // 🔹 CREATE NOTE
+  // =========================
   const handleCreateNote = async (title, content) => {
     if (!title.trim()) return;
 
@@ -96,15 +146,17 @@ export default function Dashboard() {
         return;
       }
 
-      // ✅ Update UI instantly
       setNotes((prev) => [data.data, ...prev]);
 
       toast.success("Note created");
     } catch (error) {
-      toast.error(error);
+      toast.error("Error creating note");
     }
   };
 
+  // =========================
+  // 🔹 DELETE NOTE
+  // =========================
   const handleDeleteNote = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -130,15 +182,17 @@ export default function Dashboard() {
         return;
       }
 
-      // ✅ Remove from UI instantly
       setNotes((prev) => prev.filter((note) => note.id !== id));
 
       toast.success("Note deleted");
     } catch (error) {
-      toast.error(error);
+      toast.error("Error deleting note");
     }
   };
 
+  // =========================
+  // 🔹 UPDATE NOTE
+  // =========================
   const handleUpdateNote = async (id, updatedData) => {
     try {
       const token = localStorage.getItem("token");
@@ -166,25 +220,31 @@ export default function Dashboard() {
         return;
       }
 
-      // ✅ Update UI instantly
       setNotes((prev) =>
-        prev.map((note) => (note.id === id ? data.data : note)),
+        prev.map((note) => (note.id === id ? data.data : note))
       );
 
       toast.success("Note updated");
     } catch (error) {
-      toast.error(error);
+      toast.error("Error updating note");
     }
   };
 
+  // =========================
+  // 🔹 UI
+  // =========================
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
-      <Navbar timeLeft={timeLeft} />
+
+      {/* 🔥 Navbar with Timer + Extend */}
+      <Navbar timeLeft={timeLeft} onExtend={handleExtendSession} />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         <CreateNote onCreate={handleCreateNote} />
 
-        <h2 className="mb-4 text-lg font-medium text-slate-100">Your Notes</h2>
+        <h2 className="mb-4 text-lg font-medium text-slate-100">
+          Your Notes
+        </h2>
 
         {notes.length === 0 ? (
           <p className="text-slate-400">No notes yet.</p>
