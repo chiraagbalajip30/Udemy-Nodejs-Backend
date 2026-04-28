@@ -62,7 +62,13 @@ export default function Navbar({ timeLeft, onExtend }) {
           {/* Progress Bar */}
           <div className="w-full h-2 bg-slate-700 rounded-full mt-2 overflow-hidden">
             <div
-              className={`h-full ${barColor} transition-all duration-1000 shadow-[0_0_10px_rgba(34,211,238,0.5)]`}
+              className={`h-full ${barColor} transition-all duration-1000 ${
+                barColor === "bg-red-500"
+                  ? "shadow-[0_0_10px_rgba(239,68,68,0.7)]"
+                  : barColor === "bg-yellow-400"
+                    ? "shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+                    : "shadow-[0_0_10px_rgba(34,211,238,0.7)]"
+              }`}
               style={{ width: `${progress}%` }}
             />
           </div>
