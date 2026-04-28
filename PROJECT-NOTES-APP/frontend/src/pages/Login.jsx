@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,18 +33,23 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Login failed");
+        // alert(data.error || "Login failed");
+        toast.error(data.error || "Login failed");
         return;
       }
 
       // ✅ Save token
       localStorage.setItem("token", data.data.token);
 
+      // Add Toast Success Message
+      toast.success("Logged in successfully");
+
       // ✅ Redirect to dashboard
       navigate("/");
     } catch (error) {
       console.error(error);
-      alert("Server error");
+      // alert("Server error");
+      toast.error("Server error");
     }
   };
 
@@ -94,7 +100,7 @@ const Login = () => {
           {/* Button */}
           <button
             type="submit"
-            className="w-full rounded-lg bg-cyan-500 py-2 font-medium text-slate-950 transition hover:bg-cyan-400"
+            className="w-full rounded-lg bg-cyan-500 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 cursor-pointer"
           >
             Login
           </button>

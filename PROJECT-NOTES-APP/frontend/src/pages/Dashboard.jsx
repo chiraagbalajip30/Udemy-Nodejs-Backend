@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import CreateNote from "../components/CreateNote";
 import NoteCard from "../components/NoteCard";
+import toast, { ToastIcon } from "react-hot-toast";
 
 export default function Dashboard() {
   const [notes, setNotes] = useState([]);
@@ -56,6 +57,7 @@ export default function Dashboard() {
 
       if (res.status === 401) {
         localStorage.removeItem("token");
+        toast.error("Session expired. Please login again");
         window.location.href = "/login";
         return;
       }
@@ -63,14 +65,16 @@ export default function Dashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(data.error);
+        toast.error(data.error);
         return;
       }
 
       // ✅ Update UI instantly
       setNotes((prev) => [data.data, ...prev]);
+
+      toast.success("Note created");
     } catch (error) {
-      console.error(error);
+      toast.error(error);
     }
   };
 
@@ -87,6 +91,7 @@ export default function Dashboard() {
 
       if (res.status === 401) {
         localStorage.removeItem("token");
+        toast.error("Session expired. Please login again");
         window.location.href = "/login";
         return;
       }
@@ -94,14 +99,16 @@ export default function Dashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(data.error);
+        toast.error(data.error);
         return;
       }
 
       // ✅ Remove from UI instantly
       setNotes((prev) => prev.filter((note) => note.id !== id));
+
+      toast.success("Note deleted");
     } catch (error) {
-      console.error(error);
+      toast.error(error);
     }
   };
 
@@ -120,6 +127,7 @@ export default function Dashboard() {
 
       if (res.status === 401) {
         localStorage.removeItem("token");
+        toast.error("Session expired. Please login again");
         window.location.href = "/login";
         return;
       }
@@ -127,7 +135,7 @@ export default function Dashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(data.error);
+        toast.error(data.error);
         return;
       }
 
@@ -135,13 +143,15 @@ export default function Dashboard() {
       setNotes((prev) =>
         prev.map((note) => (note.id === id ? data.data : note)),
       );
+
+      toast.success("Note updated");
     } catch (error) {
-      console.error(error);
+      ToastIcon.error(error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
       <Navbar />
 
       <main className="max-w-5xl mx-auto px-6 py-8">

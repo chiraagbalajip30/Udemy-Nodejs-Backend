@@ -13,7 +13,10 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-semibold text-slate-100">Notes App</h1>
 
-        <button onClick={handleLogout} className="text-sm text-rose-300">
+        <button
+          onClick={handleLogout}
+          className="text-sm text-rose-300 cursor-pointer"
+        >
           Logout
         </button>
       </div>

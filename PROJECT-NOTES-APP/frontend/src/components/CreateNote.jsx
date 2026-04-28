@@ -36,7 +36,7 @@ const CreateNote = ({ onCreate }) => {
 
         <button
           onClick={handleSubmit}
-          className="rounded-lg bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400"
+          className="rounded-lg bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 cursor-pointer"
         >
           Add Note
         </button>

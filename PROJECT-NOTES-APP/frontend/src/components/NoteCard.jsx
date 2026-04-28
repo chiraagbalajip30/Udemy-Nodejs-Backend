@@ -49,7 +49,7 @@ export default function NoteCard({ note, onDelete, onUpdate }) {
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-cyan-300 hover:text-cyan-200"
+              className="text-cyan-300 hover:text-cyan-200 cursor-pointer"
             >
               Edit
             </button>
@@ -57,7 +57,7 @@ export default function NoteCard({ note, onDelete, onUpdate }) {
 
           <button
             onClick={() => setShowConfirm(true)}
-            className="text-rose-300 hover:text-rose-200"
+            className="text-rose-300 hover:text-rose-200 cursor-pointer"
           >
             Delete
           </button>

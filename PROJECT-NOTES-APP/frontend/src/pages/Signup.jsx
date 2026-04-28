@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ export default function Signup() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
 
   // 🔐 Redirect if already logged in
   useEffect(() => {
@@ -49,15 +50,16 @@ export default function Signup() {
       // alert("Signup successful! Please login.");
 
       if (!res.ok) {
-        setError(data.error || "Signup failed");
+        toast.error(data.error || "Signup failed");
         return;
       }
 
+      toast.success("Account created successfully");
       // ✅ Redirect to login
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert("Server error");
+      toast.error("Server error");
     }
   };
 
@@ -132,12 +134,12 @@ export default function Signup() {
           </div>
 
           {/* ❌ ERROR MESSAGE */}
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {/* {error && <p className="text-red-400 text-sm">{error}</p>} */}
 
           {/* Button */}
           <button
             type="submit"
-            className="w-full rounded-lg bg-cyan-500 py-2 font-medium text-slate-950 transition hover:bg-cyan-400"
+            className="w-full rounded-lg bg-cyan-500 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 cursor-pointer"
           >
             Sign Up
           </button>
