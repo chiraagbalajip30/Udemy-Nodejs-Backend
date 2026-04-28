@@ -17,6 +17,12 @@ export default function Dashboard() {
           },
         });
 
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+          return;
+        }
+
         const data = await res.json();
 
         if (!res.ok) {
@@ -48,6 +54,12 @@ export default function Dashboard() {
         body: JSON.stringify({ title, content }),
       });
 
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -72,6 +84,12 @@ export default function Dashboard() {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
 
       const data = await res.json();
 
@@ -99,6 +117,12 @@ export default function Dashboard() {
         },
         body: JSON.stringify(updatedData),
       });
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
 
       const data = await res.json();
 

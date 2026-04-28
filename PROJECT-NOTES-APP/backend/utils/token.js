@@ -11,7 +11,7 @@ export async function createUserToken(payload) {
   const payloadValidatedData = validationResult.data;
 
   const token = jwt.sign(payloadValidatedData, JWT_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "1h",
   });
   return token;
 }
