@@ -62,6 +62,60 @@ export default function Dashboard() {
     }
   };
 
+  const handleDeleteNote = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:8000/notes/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      // ✅ Remove from UI instantly
+      setNotes((prev) => prev.filter((note) => note.id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpdateNote = async (id, updatedData) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:8000/notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      // ✅ Update UI instantly
+      setNotes((prev) =>
+        prev.map((note) => (note.id === id ? data.data : note)),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
       <Navbar />
@@ -76,7 +130,12 @@ export default function Dashboard() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {notes.map((note) => (
-              <NoteCard key={note.id} note={note} />
+              <NoteCard
+                key={note.id}
+                note={note}
+                onDelete={handleDeleteNote}
+                onUpdate={handleUpdateNote}
+              />
             ))}
           </div>
         )}
