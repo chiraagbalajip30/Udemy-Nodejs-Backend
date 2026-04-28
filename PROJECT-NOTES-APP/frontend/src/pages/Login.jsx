@@ -39,7 +39,13 @@ const Login = () => {
       }
 
       // ✅ Save token
+      // localStorage.setItem("token", data.data.token);
+
+      // Expiry Time and Token Save
+      const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hour
+
       localStorage.setItem("token", data.data.token);
+      localStorage.setItem("expiry", expiryTime);
 
       // Add Toast Success Message
       toast.success("Logged in successfully");

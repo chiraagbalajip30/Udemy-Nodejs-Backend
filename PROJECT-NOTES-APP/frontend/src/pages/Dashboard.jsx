@@ -6,6 +6,7 @@ import toast, { ToastIcon } from "react-hot-toast";
 
 export default function Dashboard() {
   const [notes, setNotes] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -38,6 +39,32 @@ export default function Dashboard() {
     };
 
     fetchNotes();
+  }, []);
+
+  // TIMER useEffect Logic
+  useEffect(() => {
+    const expiry = localStorage.getItem("expiry");
+
+    if (!expiry) return;
+
+    const interval = setInterval(() => {
+      const remaining = expiry - Date.now();
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("expiry");
+
+        toast.error("Session expired");
+
+        window.location.href = "/login";
+      } else {
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleCreateNote = async (title, content) => {
@@ -146,13 +173,13 @@ export default function Dashboard() {
 
       toast.success("Note updated");
     } catch (error) {
-      ToastIcon.error(error);
+      toast.error(error);
     }
   };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
-      <Navbar />
+      <Navbar timeLeft={timeLeft} />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         <CreateNote onCreate={handleCreateNote} />
