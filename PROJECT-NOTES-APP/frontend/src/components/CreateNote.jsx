@@ -33,9 +33,7 @@ const CreateNote = ({ onCreate }) => {
 
       if (finalTranscript) {
         setContent((prev) =>
-          prev
-            ? prev + " " + finalTranscript.trim()
-            : finalTranscript.trim()
+          prev ? prev + " " + finalTranscript.trim() : finalTranscript.trim(),
         );
       }
     };
