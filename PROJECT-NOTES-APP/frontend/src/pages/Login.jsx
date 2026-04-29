@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const Login = () => {
   // =========================
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // =========================
   // 🔹 REDIRECT IF LOGGED IN
@@ -105,19 +107,31 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
+          {/* Password with Show/Hide Toggle */}
           <div>
-            <label className="block text-sm font-medium text-slate-200">
+            <label className="block text-sm font-medium text-slate-200 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950/80 px-4 py-2 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full rounded-lg border border-slate-700 bg-slate-950/80 px-4 py-2 pr-10 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+
+              {/* Eye Icon Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-800 transition-colors focus:outline-none"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           {/* Button */}
