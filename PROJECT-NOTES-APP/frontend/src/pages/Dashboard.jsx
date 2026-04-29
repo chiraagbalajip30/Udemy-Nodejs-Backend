@@ -221,7 +221,7 @@ export default function Dashboard() {
       }
 
       setNotes((prev) =>
-        prev.map((note) => (note.id === id ? data.data : note))
+        prev.map((note) => (note.id === id ? data.data : note)),
       );
 
       toast.success("Note updated");
@@ -235,16 +235,13 @@ export default function Dashboard() {
   // =========================
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
-
       {/* 🔥 Navbar with Timer + Extend */}
       <Navbar timeLeft={timeLeft} onExtend={handleExtendSession} />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         <CreateNote onCreate={handleCreateNote} />
 
-        <h2 className="mb-4 text-lg font-medium text-slate-100">
-          Your Notes
-        </h2>
+        <h2 className="mb-4 text-lg font-medium text-slate-100">Your Notes</h2>
 
         {notes.length === 0 ? (
           <p className="text-slate-400">No notes yet.</p>
