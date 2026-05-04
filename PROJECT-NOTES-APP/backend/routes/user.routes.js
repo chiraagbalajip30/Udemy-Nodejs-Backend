@@ -63,11 +63,13 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+
     const validationResult = await loginPostRequestBodySchema.safeParseAsync(
       req.body,
     );
     if (validationResult.error) {
-      res.status(400).json({ error: validationResult.error.format() });
+      return res.status(400).json({ error: validationResult.error.format() });
     }
     const { email, password } = validationResult.data;
 
