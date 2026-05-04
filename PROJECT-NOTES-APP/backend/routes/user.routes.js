@@ -71,6 +71,7 @@ router.post("/login", async (req, res) => {
     if (validationResult.error) {
       return res.status(400).json({ error: validationResult.error.format() });
     }
+
     const { email, password } = validationResult.data;
 
     const user = await findUserByEmail(email);
