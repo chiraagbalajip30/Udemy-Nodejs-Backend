@@ -11,7 +11,13 @@ const PORT = process.env.PORT ?? 8000;
 // =========================
 // ✅ CORS
 // =========================
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "https://udemy-nodejs-backend.vercel.app/",
+    credentials: true,
+  }),
+);
 
 // =========================
 // ✅ Middleware
