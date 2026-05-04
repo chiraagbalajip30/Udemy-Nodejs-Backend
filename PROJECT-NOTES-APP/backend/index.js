@@ -15,8 +15,9 @@ const PORT = process.env.PORT ?? 8000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // Local development
-      "https://udemy-nodejs-backend.vercel.app/", // ← Your Vercel frontend
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://udemy-nodejs-backend.vercel.app", // ← No trailing slash
     ],
     credentials: true,
   }),
