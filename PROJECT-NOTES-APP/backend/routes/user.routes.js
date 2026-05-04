@@ -76,6 +76,7 @@ router.post("/login", async (req, res) => {
 
     const user = await findUserByEmail(email);
 
+    
     if (!user) {
       return res
         .status(400)
