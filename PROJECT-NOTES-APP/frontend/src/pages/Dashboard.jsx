@@ -20,7 +20,7 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:8000/notes", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -123,7 +123,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:8000/notes", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -161,7 +161,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:8000/notes/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -197,7 +197,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:8000/notes/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
